@@ -37,9 +37,8 @@ sh('npm', ['run', 'build'], process.cwd());
 const work = await mkdtemp(join(tmpdir(), 'edulingo-deploy-'));
 try {
   sh('git', ['init', '-q', '-b', BRANCH], work);
-  for (const entry of ['index.html', '404.html', 'assets', 'favicon.svg', '.nojekyll']) {
-    await cp(join('dist', entry), join(work, entry), { recursive: true });
-  }
+  // Copy the whole build so prerendered route folders ship too.
+  await cp('dist', work, { recursive: true });
   sh('git', ['add', '-A'], work);
   const stamp = new Date().toISOString();
   sh('git', ['-c', 'user.name=EduLingo Deploy', '-c', 'user.email=deploy@local',

@@ -413,10 +413,14 @@ Publishing uses a static branch (`gh-pages`) because this repository's Pages sou
 npm run deploy
 ```
 
-The script builds with `BASE_PATH=/Khoi_Nguyen/`, copies `dist/` (including `404.html` and
-`.nojekyll`) onto an orphan `gh-pages` commit, and force-pushes it. `404.html` is a copy of the app
-shell so deep links and reloads boot React Router — GitHub returns a 404 status for those paths,
-but the correct page renders.
+The script builds with the repo-derived base path, then prerenders the shell into
+`<route>/index.html` for all 119 known routes (11 section pages + 96 glossary terms + 8 chapters +
+6 scenarios, counting overlaps). That makes deep links return **200**, not a 404 page with a working
+body. `404.html` still exists as the shell fallback for genuinely unknown paths, and `.nojekyll`
+stops Jekyll from touching the hashed asset names.
+
+Direct URLs need a trailing slash (`/glossary/`, `/guide/types-of-interpreting/`); without one
+GitHub issues a 301 redirect to the slashed form, which browsers follow transparently.
 
 Note: `package.json` is named `edulingo-guide`, but the Pages base path must match the **repository**
 name (`Khoi_Nguyen`), which is why the deploy script derives it from the git remote.
