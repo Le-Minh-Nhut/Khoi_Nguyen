@@ -431,7 +431,7 @@ Machine-readable records, including Commons file titles and source URLs, live in
 `src/content/imageCredits.ts`. Adding an image means adding a matching record there — the About
 page renders that array directly.
 
-## 19. Deployment
+## 18. Deployment
 
 Live site: **https://le-minh-nhut.github.io/Khoi_Nguyen/**
 
