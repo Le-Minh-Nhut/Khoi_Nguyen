@@ -13,6 +13,8 @@ import { FeaturedScenario } from '@/components/home/FeaturedScenario';
 import { ResourceGrid } from '@/components/home/ResourceGrid';
 import { EventCategories } from '@/components/home/EventCategories';
 import { BilingualBlock } from '@/components/shared/Bilingual';
+import { ImageCredit } from '@/components/shared/ImageCredit';
+import { imagePath } from '@/lib/imagePath';
 
 export function HeroDocument() {
   return (
@@ -201,6 +203,35 @@ export default function HomePage() {
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
           <FeaturedTerm termSlug={featuredTerm.slug} />
           {featuredScenario ? <FeaturedScenario scenario={featuredScenario} /> : null}
+        </div>
+      </section>
+
+      {/* --------------------------- Photo band ----------------------------- */}
+      <section aria-labelledby="field-band-heading" className="border-t border-divider bg-canvas">
+        <div className="container-page py-12">
+          <h2 id="field-band-heading" className="sr-only">
+            Ảnh hiện trường
+          </h2>
+          <figure className="overflow-hidden rounded-panel border border-divider">
+            <div className="relative h-[14rem] w-full sm:h-[18rem] lg:h-[22rem]">
+              <img
+                src={imagePath('hero-band.webp')}
+                alt="Sinh viên trong lễ tốt nghiệp, đội mũ cử nhân xếp hàng trước giảng đường"
+                width={1600}
+                height={685}
+                loading="lazy"
+                decoding="async"
+                className="size-full object-cover"
+              />
+            </div>
+            <figcaption className="flex flex-wrap items-baseline justify-between gap-2 border-t border-divider bg-surface px-4 py-2.5">
+              <p className="max-w-[62ch] text-[12.5px] leading-relaxed text-ink-muted">
+                Lễ tốt nghiệp là thời điểm thuật ngữ, chức danh và nghi thức gặp nhau dày đặc nhất — và cũng là
+                lúc một bản phiên dịch sai gây hậu quả rõ nhất.
+              </p>
+              <ImageCredit file="hero-band.webp" />
+            </figcaption>
+          </figure>
         </div>
       </section>
 

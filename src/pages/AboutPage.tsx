@@ -8,6 +8,9 @@ import { phrases } from '@/content/phrases';
 import { lessons } from '@/content/lessons';
 import { scenarios } from '@/content/scenarios';
 import { Button } from '@/components/ui/button';
+import { ImageCredit } from '@/components/shared/ImageCredit';
+import { imageCredits } from '@/content/imageCredits';
+import { imagePath } from '@/lib/imagePath';
 
 const audience = [
   {
@@ -92,6 +95,24 @@ export default function AboutPage() {
 
       <div className="mt-8 grid gap-12 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="min-w-0 max-w-[68ch]">
+          <figure className="mb-8 overflow-hidden rounded-panel border border-divider">
+            <img
+              src={imagePath('about-venue.webp')}
+              alt="Giảng đường đại học trong giờ giảng, sinh viên ngồi theo dãy bàn"
+              width={1100}
+              height={619}
+              loading="lazy"
+              decoding="async"
+              className="aspect-video w-full object-cover"
+            />
+            <figcaption className="flex flex-wrap items-baseline justify-between gap-2 border-t border-divider bg-surface px-3.5 py-2">
+              <span className="text-[12px] text-ink-muted">
+                Giảng đường — nơi phần lớn công việc phiên dịch giáo dục thực sự diễn ra.
+              </span>
+              <ImageCredit file="about-venue.webp" />
+            </figcaption>
+          </figure>
+
           <section aria-labelledby="background">
             <h2 id="background" className="text-h2 mb-3">
               Bối cảnh dự án
@@ -164,6 +185,34 @@ export default function AboutPage() {
                   </li>
                 );
               })}
+            </ul>
+          </section>
+
+          <section aria-labelledby="credits" className="mt-10">
+            <h2 id="credits" className="text-h2 mb-2">
+              Nguồn ảnh
+            </h2>
+            <p className="mb-3 max-w-[62ch] text-[13px] leading-relaxed text-ink-muted">
+              Ảnh minh hoạ lấy từ Wikimedia Commons, giấy phép công khai (Public Domain, CC0, CC BY,
+              CC BY-SA), lưu trữ cục bộ và không tải từ máy chủ ngoài khi chạy. Mỗi ảnh đã được cắt và
+              nén lại cho trang web.
+            </p>
+            <ul className="divide-y divide-divider rounded-card border border-divider bg-surface">
+              {imageCredits.map((credit) => (
+                <li key={credit.file} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-3.5 py-2.5">
+                  <span className="min-w-0 text-[12.5px] text-ink">
+                    {credit.author}
+                  </span>
+                  <a
+                    href={credit.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[12px] text-ink-muted underline-offset-2 hover:text-accent-strong hover:underline"
+                  >
+                    {credit.license}
+                  </a>
+                </li>
+              ))}
             </ul>
           </section>
 

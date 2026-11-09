@@ -402,7 +402,36 @@ Screenshots captured during the visual pass are in `screenshots/` — 26 files, 
 
 ---
 
-## 17. Deployment
+## 17. Image credits and licensing
+
+All photographs are local WebP copies in `public/images/` (1.4 MB total), sourced from Wikimedia
+Commons under free licences. CC BY / CC BY-SA require attribution, so each image carries a credit
+line in the UI and the full list is rendered on `/about`.
+
+| File | Author | Licence |
+|---|---|---|
+| cat-study-abroad.webp | Biswarup Ganguly | CC BY 3.0 |
+| cat-scholarships.webp | USAID Pakistan | Public domain |
+| cat-cooperation.webp | Press Information Department (Bangladesh) | Public domain |
+| cat-conferences.webp | Chris McKenna | CC BY-SA 4.0 |
+| cat-administration.webp | Kenneth C. Zirkel | CC BY-SA 4.0 |
+| cat-exchange.webp | Tulane Public Relations | CC BY 2.0 |
+| cat-research.webp | Rhoda Baer | Public domain |
+| cat-events.webp | Bijay Chaurasia | CC BY-SA 4.0 |
+| sc-partnership.webp | Ambassador Nicholas Burns | Public domain |
+| sc-consultation.webp | Indonesian Ministry of Foreign Affairs | Public domain |
+| sc-seminar.webp | Jorge Jaramillo | CC BY-SA 4.0 |
+| sc-exchange.webp | USAID Pakistan | Public domain |
+| sc-scholarship.webp | Biswarup Ganguly | CC BY 3.0 |
+| sc-signing.webp | Banking Academy of Vietnam | CC BY-SA 4.0 |
+| hero-band.webp | Hugo Sundström | CC BY 4.0 |
+| about-venue.webp | Tungsten | Public domain |
+
+Machine-readable records, including Commons file titles and source URLs, live in
+`src/content/imageCredits.ts`. Adding an image means adding a matching record there — the About
+page renders that array directly.
+
+## 19. Deployment
 
 Live site: **https://le-minh-nhut.github.io/Khoi_Nguyen/**
 
