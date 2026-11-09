@@ -413,11 +413,10 @@ Publishing uses a static branch (`gh-pages`) because this repository's Pages sou
 npm run deploy
 ```
 
-The script builds with the repo-derived base path, then prerenders the shell into
-`<route>/index.html` for all 119 known routes (11 section pages + 96 glossary terms + 8 chapters +
-6 scenarios, counting overlaps). That makes deep links return **200**, not a 404 page with a working
-body. `404.html` still exists as the shell fallback for genuinely unknown paths, and `.nojekyll`
-stops Jekyll from touching the hashed asset names.
+The script builds with the repo-derived base path, then writes the app shell into
+`<route>/index.html` for every known route: 11 section pages, 96 glossary terms, 8 chapters, and
+6 scenarios — 119 files in total, all returning **200**. `404.html` remains as the shell fallback
+for genuinely unknown paths, and `.nojekyll` stops Jekyll from touching hashed asset names.
 
 Direct URLs need a trailing slash (`/glossary/`, `/guide/types-of-interpreting/`); without one
 GitHub issues a 301 redirect to the slashed form, which browsers follow transparently.
