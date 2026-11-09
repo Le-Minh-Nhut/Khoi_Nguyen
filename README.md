@@ -402,10 +402,26 @@ Screenshots captured during the visual pass are in `screenshots/` — 26 files, 
 
 ---
 
-## 17. Authorization
+## 17. Deployment
 
-This repository was not pushed, deployed, or published. All changes are local on branch
-`feat/edulingo-guide`.
+Live site: **https://le-minh-nhut.github.io/Khoi_Nguyen/**
+
+Publishing uses a static branch (`gh-pages`) because this repository's Pages source is set to
+"Deploy from a branch". Redeploy with:
+
+```bash
+npm run deploy
+```
+
+The script builds with `BASE_PATH=/Khoi_Nguyen/`, copies `dist/` (including `404.html` and
+`.nojekyll`) onto an orphan `gh-pages` commit, and force-pushes it. `404.html` is a copy of the app
+shell so deep links and reloads boot React Router — GitHub returns a 404 status for those paths,
+but the correct page renders.
+
+Note: `package.json` is named `edulingo-guide`, but the Pages base path must match the **repository**
+name (`Khoi_Nguyen`), which is why the deploy script derives it from the git remote.
+
+Code lives on `main` (default) and `feat/edulingo-guide`.
 
 ---
 
