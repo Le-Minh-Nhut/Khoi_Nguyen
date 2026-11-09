@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="EduLingo Guide">
+  <rect width="64" height="64" rx="14" fill="#172D42" />
+  <path d="M17 45V21h5.4l6.2 13.1L34.8 21H40v24h-4.6V29.4l-5.1 10.7h-3.5l-5.1-10.7V45H17Z" fill="#FFFFFF" />
+  <circle cx="47" cy="41" r="4" fill="#E5B875" />
+</svg>
