@@ -19,7 +19,7 @@ export function EmptyState({ title, description, action, icon, className }: Empt
       )}
       role="status"
     >
-      {icon ? <div className="mb-3 flex justify-center text-ink-muted/70">{icon}</div> : null}
+      {icon ? <div className="mb-3 flex justify-center text-ink-muted">{icon}</div> : null}
       <p className="font-serif text-lg font-semibold text-ink">{title}</p>
       {description ? <p className="mx-auto mt-1.5 max-w-md text-sm text-ink-muted">{description}</p> : null}
       {action ? <div className="mt-5 flex justify-center">{action}</div> : null}

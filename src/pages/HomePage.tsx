@@ -13,13 +13,15 @@ import { FeaturedScenario } from '@/components/home/FeaturedScenario';
 import { ResourceGrid } from '@/components/home/ResourceGrid';
 import { EventCategories } from '@/components/home/EventCategories';
 import { BilingualBlock } from '@/components/shared/Bilingual';
+import { glossaryTerms } from '@/content/glossary';
 import { ImageCredit } from '@/components/shared/ImageCredit';
 import { imagePath } from '@/lib/imagePath';
 
 export function HeroDocument() {
+  const t = useI18n();
   return (
     <figure
-      aria-label="Bản xem trước tài liệu song ngữ tại một diễn đàn giáo dục quốc tế"
+      aria-label={t('hero.doc.label')}
       className="relative mx-auto w-full max-w-[30rem] lg:max-w-none"
     >
       {/* Back sheet: a second page peeking out, implying a bound document. */}
@@ -30,10 +32,12 @@ export function HeroDocument() {
       <div className="relative rotate-[-0.6deg] rounded-panel border border-divider-strong/80 bg-surface p-6 shadow-raise sm:p-7">
         <div className="flex items-start justify-between gap-4 border-b border-divider pb-4">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-muted">
-              International Education Forum
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-muted" lang="en">
+              {t('hero.doc.forum.en')}
             </p>
-            <p className="mt-1 font-serif text-[13px] italic text-ink-muted">Diễn đàn Giáo dục Quốc tế</p>
+            <p className="mt-1 font-serif text-[13px] italic text-ink-muted" lang="vi">
+              {t('hero.doc.forum.vi')}
+            </p>
           </div>
           <span className="shrink-0 rounded border border-divider px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">
             EN ⇄ VI
@@ -42,35 +46,43 @@ export function HeroDocument() {
 
         <div className="mt-5 space-y-5">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-muted/80">English</p>
-            <p className="mt-1 font-serif text-[1.05rem] leading-[1.5] text-ink">
-              We look forward to strengthening our academic partnership.
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
+              {t('label.english')}
+            </p>
+            <p className="mt-1 font-serif text-[1.05rem] leading-[1.5] text-ink" lang="en">
+              {t('hero.doc.sentence.en')}
             </p>
           </div>
 
           <div className="border-l-2 border-accent/40 pl-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-strong/80">
-              Tiếng Việt
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-strong">
+              {t('label.vietnamese')}
             </p>
-            <p className="mt-1 text-[1.05rem] leading-[1.6] text-ink">
-              Chúng tôi mong muốn tiếp tục thắt chặt quan hệ hợp tác học thuật.
+            <p className="mt-1 text-[1.05rem] leading-[1.6] text-ink" lang="vi">
+              {t('hero.doc.sentence.vi')}
             </p>
           </div>
 
           <div className="rounded-lg bg-highlight-soft px-4 py-3">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#8a6320]">Key term</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#7a5518]">
+              {t('label.keyTerm')}
+            </p>
             <div className="mt-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-              <span className="font-serif text-[15px] font-semibold text-ink">Academic Partnership</span>
-              <span className="text-[13px] text-ink-muted">Quan hệ hợp tác học thuật</span>
+              <span className="font-serif text-[15px] font-semibold text-ink" lang="en">
+                {t('hero.doc.term.en')}
+              </span>
+              <span className="text-[13px] text-ink-muted" lang="vi">
+                {t('hero.doc.term.vi')}
+              </span>
             </div>
           </div>
         </div>
 
         <div className="mt-5 flex items-center justify-between border-t border-dashed border-divider pt-3 text-[11px] text-ink-muted">
-          <span>Plenary · 09:15 — 09:45</span>
+          <span>{t('hero.doc.session')}</span>
           <span className="flex items-center gap-1">
             <Languages className="size-3" aria-hidden="true" />
-            Consecutive
+            {t('hero.doc.mode')}
           </span>
         </div>
       </div>
@@ -101,18 +113,19 @@ export default function HomePage() {
           <div className="animate-rise">
             <p className="eyebrow flex items-center gap-2">
               <span className="inline-block h-px w-8 bg-accent/50" aria-hidden="true" />
-              Sổ tay song ngữ · Việt — Anh
+              {t('home.eyebrow')}
             </p>
-            <h1 className="mt-4 text-[2.3rem] font-semibold leading-[1.04] tracking-[-0.025em] sm:text-[3.1rem] lg:text-[3.35rem]">
-              <span className="block whitespace-nowrap">Bridge Languages.</span>
-              <span className="block whitespace-nowrap">Connect Education.</span>
+            {/* Fluid size: the fixed 3.35rem step overflowed the section's
+                overflow-hidden box below ~430px and clipped "Languages." */}
+            <h1 className="mt-4 text-[clamp(1.75rem,7.4vw,3.35rem)] font-semibold leading-[1.06] tracking-[-0.025em]">
+              <span className="block">Bridge Languages.</span>
+              <span className="block">Connect Education.</span>
             </h1>
             <p className="mt-5 max-w-[46ch] font-serif text-[1.15rem] italic leading-snug text-ink-muted">
-              A Practical Vietnamese–English Translation and Interpretation Guide for Educational Events.
+              {t('home.lede')}
             </p>
             <p className="mt-4 max-w-[54ch] text-[15px] leading-relaxed text-ink-muted">
-              Find essential terminology, explore professional expressions, and prepare for real communication
-              situations in international educational settings.
+              {t('home.lede2')}
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -129,15 +142,21 @@ export default function HomePage() {
 
             <dl className="mt-10 grid max-w-md grid-cols-3 gap-4 border-t border-divider pt-5">
               <div>
-                <dt className="text-[11px] uppercase tracking-wider text-ink-muted">Thuật ngữ</dt>
-                <dd className="font-serif text-xl font-semibold text-ink">96</dd>
+                <dt className="text-[11px] uppercase tracking-wider text-ink-muted">
+                  {t('home.stat.terms')}
+                </dt>
+                <dd className="font-serif text-xl font-semibold text-ink">{glossaryTerms.length}</dd>
               </div>
               <div>
-                <dt className="text-[11px] uppercase tracking-wider text-ink-muted">Mẫu câu</dt>
+                <dt className="text-[11px] uppercase tracking-wider text-ink-muted">
+                  {t('home.stat.phrases')}
+                </dt>
                 <dd className="font-serif text-xl font-semibold text-ink">{phraseCount}</dd>
               </div>
               <div>
-                <dt className="text-[11px] uppercase tracking-wider text-ink-muted">Tình huống</dt>
+                <dt className="text-[11px] uppercase tracking-wider text-ink-muted">
+                  {t('home.stat.scenarios')}
+                </dt>
                 <dd className="font-serif text-xl font-semibold text-ink">{scenarios.length}</dd>
               </div>
             </dl>
@@ -167,11 +186,8 @@ export default function HomePage() {
         <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="eyebrow mb-2">{t('glossary.categories')}</p>
-            <h2 className="text-h2 max-w-[26ch]">Khám phá theo loại sự kiện</h2>
-            <p className="mt-1 text-[13px] text-ink-muted">Browse by educational event</p>
-            <p className="mt-2 max-w-[60ch] text-sm text-ink-muted">
-              Tám nhóm chủ đề bao trùm những gì thực sự xuất hiện trong ngày — từ hồ sơ tuyển sinh đến lễ ký kết.
-            </p>
+            <h2 className="text-h2 max-w-[26ch]">{t('home.browse.title')}</h2>
+            <p className="mt-2 max-w-[60ch] text-sm text-ink-muted">{t('home.browse.lede')}</p>
           </div>
           <Button asChild variant="quiet" size="sm">
             <Link to="/glossary">
@@ -187,12 +203,9 @@ export default function HomePage() {
       <section className="border-y border-divider bg-surface">
         <div className="container-page py-14">
           <div className="mb-8 max-w-2xl">
-            <p className="eyebrow mb-2">Trước · Trong · Sau sự kiện</p>
-            <h2 className="text-h2">Tuần làm việc quanh một phiên dịch vụ</h2>
-            <p className="mt-1 text-[13px] text-ink-muted">The week around an interpreting assignment</p>
-            <p className="mt-2 text-sm text-ink-muted">
-              Chuẩn bị quyết định phần lớn kết quả. Mỗi giai đoạn có một công cụ cụ thể trong sổ tay này.
-            </p>
+            <p className="eyebrow mb-2">{t('home.pathway.eyebrow')}</p>
+            <h2 className="text-h2">{t('home.pathway.title')}</h2>
+            <p className="mt-2 text-sm text-ink-muted">{t('home.pathway.lede')}</p>
           </div>
           <EventPathway />
         </div>
@@ -210,13 +223,13 @@ export default function HomePage() {
       <section aria-labelledby="field-band-heading" className="border-t border-divider bg-canvas">
         <div className="container-page py-12">
           <h2 id="field-band-heading" className="sr-only">
-            Ảnh hiện trường
+            {t('home.band.heading')}
           </h2>
           <figure className="overflow-hidden rounded-panel border border-divider">
             <div className="relative h-[14rem] w-full sm:h-[18rem] lg:h-[22rem]">
               <img
                 src={imagePath('hero-band.webp')}
-                alt="Sinh viên trong lễ tốt nghiệp, đội mũ cử nhân xếp hàng trước giảng đường"
+                alt={t('home.band.alt')}
                 width={1600}
                 height={685}
                 loading="lazy"
@@ -226,8 +239,7 @@ export default function HomePage() {
             </div>
             <figcaption className="flex flex-wrap items-baseline justify-between gap-2 border-t border-divider bg-surface px-4 py-2.5">
               <p className="max-w-[62ch] text-[12.5px] leading-relaxed text-ink-muted">
-                Lễ tốt nghiệp là thời điểm thuật ngữ, chức danh và nghi thức gặp nhau dày đặc nhất — và cũng là
-                lúc một bản phiên dịch sai gây hậu quả rõ nhất.
+                {t('home.band.caption')}
               </p>
               <ImageCredit file="hero-band.webp" />
             </figcaption>
@@ -239,9 +251,8 @@ export default function HomePage() {
       <section className="border-t border-divider bg-surface">
         <div className="container-page py-14">
           <div className="mb-6 max-w-2xl">
-            <p className="eyebrow mb-2">Tài nguyên học tập</p>
-            <h2 className="text-h2">Đi tiếp từ đâu</h2>
-            <p className="mt-1 text-[13px] text-ink-muted">Where to go next</p>
+            <p className="eyebrow mb-2">{t('home.resources.eyebrow')}</p>
+            <h2 className="text-h2">{t('home.resources.title')}</h2>
           </div>
           <ResourceGrid />
         </div>
@@ -252,10 +263,8 @@ export default function HomePage() {
         <div className="relative overflow-hidden rounded-panel border border-accent/20 bg-accent-soft px-6 py-10 sm:px-10">
           <div className="relative grid gap-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
             <div>
-              <h2 className="text-h2 max-w-[28ch]">Chưa biết bắt đầu từ đâu?</h2>
-              <p className="mt-1 max-w-[52ch] text-sm text-ink-muted">
-                Đọc chương một của phần hướng dẫn, rồi thử một tình huống với bản dịch đang ẩn.
-              </p>
+              <h2 className="text-h2 max-w-[28ch]">{t('home.cta.title')}</h2>
+              <p className="mt-1 max-w-[52ch] text-sm text-ink-muted">{t('home.cta.body')}</p>
             </div>
             <div className="flex flex-wrap gap-2.5">
               <Button asChild>
@@ -276,7 +285,7 @@ export default function HomePage() {
             <BilingualBlock
               en="“Prepare the terminology, then practise saying it aloud. Reading a glossary is not the same as being able to produce a term under pressure.”"
               vi="“Hãy chuẩn bị thuật ngữ, rồi luyện nói thành tiếng. Đọc bảng thuật ngữ không giống với việc có thể bật ra thuật ngữ đó dưới áp lực.”"
-              label="Ghi chú thực địa · Field note"
+              label={t('home.cta.note')}
               dense
             />
           </div>

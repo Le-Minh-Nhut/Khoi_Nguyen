@@ -22,7 +22,7 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
           const last = index === items.length - 1;
           return (
             <li key={`${crumb.label}-${index}`} className="flex items-center gap-1">
-              <ChevronRight className="size-3.5 text-divider-strong" aria-hidden="true" />
+              <ChevronRight className="size-3.5 text-ink-muted" aria-hidden="true" />
               {crumb.to && !last ? (
                 <Link to={crumb.to} className="transition-colors hover:text-accent-strong">
                   {crumb.label}

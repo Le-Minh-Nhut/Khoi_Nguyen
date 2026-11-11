@@ -12,28 +12,37 @@ import { Button } from '@/components/ui/button';
 import { TranslationNote } from '@/components/shared/Bilingual';
 import NotFoundPage from './NotFoundPage';
 
+const EMPTY_HIDDEN: Set<number> = new Set();
+
 export default function ScenarioDetailPage() {
   const t = useI18n();
   const { slug } = useParams();
   const index = scenarios.findIndex((item) => item.slug === slug);
-  const [hidden, setHidden] = useState<Set<number>>(new Set());
+  // Per-scenario hidden set, keyed by slug: navigating to another scenario no
+  // longer inherits the previous one's hidden turn indexes.
+  const [hiddenBySlug, setHiddenBySlug] = useState<Record<string, Set<number>>>({});
 
   if (index === -1) return <NotFoundPage />;
 
   const scenario = scenarios[index];
+  const hidden = hiddenBySlug[scenario.slug] ?? EMPTY_HIDDEN;
   const previous = index > 0 ? scenarios[index - 1] : null;
   const next = index < scenarios.length - 1 ? scenarios[index + 1] : null;
 
   const allHidden = hidden.size === scenario.dialogue.length;
+
   const toggleAll = () =>
-    setHidden(allHidden ? new Set() : new Set(scenario.dialogue.map((_, i) => i)));
+    setHiddenBySlug((current) => ({
+      ...current,
+      [scenario.slug]: allHidden ? new Set() : new Set(scenario.dialogue.map((_, i) => i)),
+    }));
 
   const toggleOne = (turn: number) =>
-    setHidden((current) => {
-      const copy = new Set(current);
+    setHiddenBySlug((current) => {
+      const copy = new Set(current[scenario.slug] ?? []);
       if (copy.has(turn)) copy.delete(turn);
       else copy.add(turn);
-      return copy;
+      return { ...current, [scenario.slug]: copy };
     });
 
   const dialogueText = scenario.dialogue
@@ -75,7 +84,7 @@ export default function ScenarioDetailPage() {
               {scenario.objectives.map((objective) => (
                 <li key={objective.en} className="flex gap-2 text-[14px] leading-relaxed text-ink">
                   <span aria-hidden="true" className="mt-2 size-1 shrink-0 rounded-full bg-accent" />
-                  <span>{objective.vi}</span>
+                  <span lang="vi">{objective.vi}</span>
                 </li>
               ))}
             </ul>
@@ -113,7 +122,7 @@ export default function ScenarioDetailPage() {
               {scenario.tips.map((tip) => (
                 <li key={tip.en} className="flex gap-2.5 text-[14px] leading-relaxed text-ink">
                   <span aria-hidden="true" className="mt-2 size-1 shrink-0 rounded-full bg-accent" />
-                  <span>{tip.vi}</span>
+                  <span lang="vi">{tip.vi}</span>
                 </li>
               ))}
             </ul>
@@ -252,19 +261,23 @@ function DialogueTurnCard({
 
       <div className="mt-3 grid gap-3 sm:grid-cols-2 sm:gap-6">
         <div>
-          <p className="mb-1 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-muted/80">
+          <p className="mb-1 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-muted">
             {t('label.english')}
           </p>
-          <p className="font-serif text-[1rem] leading-relaxed text-ink">{turn.en}</p>
+          <p className="font-serif text-[1rem] leading-relaxed text-ink" lang="en">
+            {turn.en}
+          </p>
         </div>
         <div className="border-t border-dashed border-divider pt-3 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
-          <p className="mb-1 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-accent-strong/80">
+          <p className="mb-1 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-accent-strong">
             {t('label.vietnamese')}
           </p>
           {translationHidden ? (
             <p className="text-[13px] italic text-ink-muted">— {t('action.showTranslation')} —</p>
           ) : (
-            <p className="text-[1rem] leading-relaxed text-ink">{turn.vi}</p>
+            <p className="text-[1rem] leading-relaxed text-ink" lang="vi">
+              {turn.vi}
+            </p>
           )}
         </div>
       </div>

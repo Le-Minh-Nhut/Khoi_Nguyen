@@ -233,7 +233,7 @@ All keys are namespaced and versioned (`edulingo:v1:`). Nothing leaves the brows
 | Key | Contents |
 |---|---|
 | `edulingo:v1:settings` | `{ uiLang: 'vi' \| 'en', showTranslations: boolean }` |
-| `edulingo:v1:bookmarks` | `{ glossary: string[], phrases: string[], lessons: string[], scenarios: string[] }` |
+| `edulingo:v1:bookmarks` | `{ glossary: string[], phrases: string[], lessons: string[], tips: string[], scenarios: string[] }` |
 | `edulingo:v1:checklists:prep` | `Record<itemId, boolean>` |
 | `edulingo:v1:checklists:quality` | `Record<criterionId, boolean>` |
 | `edulingo:v1:glossary-template` | `Array<{ id, en, vi, context }>` |
@@ -242,8 +242,17 @@ All keys are namespaced and versioned (`edulingo:v1:`). Nothing leaves the brows
 | `edulingo:v1:quiz-scores` | `Record<quizId, { best, total, attempts }>` |
 
 Reads and writes are wrapped in `try/catch`: private-mode or quota failures degrade to in-memory
-state rather than breaking the UI. Missing keys fall back to documented defaults, so an upgrade
-never strands a user.
+state rather than breaking the UI.
+
+Every read is validated, not just parsed. `src/lib/storageSchema.ts` normalises each key, so a
+`null`, a number, a truncated JSON string, or an object missing fields is repaired instead of
+reaching a component and throwing during render. Legacy data is migrated: tips bookmarked by an
+older build as `lessons: ['tip:<id>']` are moved into `tips` and de-duplicated, so they stop
+disappearing from `/saved`.
+
+`useLocalStorage` keeps one module-level store per key, shared by every mounted instance in the
+tab. Two components bound to the same key (the two quiz cards on `/practice`) now compose their
+writes instead of overwriting each other.
 
 ---
 
@@ -332,7 +341,9 @@ applied throughout:
 
 **Typecheck** — `npx tsc --noEmit` clean (strict, `noUnusedLocals`, `noUnusedParameters`).
 
-**Unit + component tests** — `npx vitest run`: **31 passed**, 2 files.
+**Lint** — `npm run lint` (oxlint): clean.
+
+**Unit + component tests** — `npx vitest run`: **102 passed**, 7 files.
 
 Coverage of behaviour that can regress:
 
@@ -355,7 +366,13 @@ Coverage of behaviour that can regress:
 **Production build** — `npm run build` succeeds. Pages are code-split: the home page loads ~24 kB,
 the largest page (practice) ~35 kB, with content tables shared across chunks.
 
-**Browser tests** — Playwright, two projects (1440×900 desktop, 390×844 mobile): **115 passed, 3 skipped** (the skips are deliberate viewport guards: desktop-only dropdown checks and the sub-640px language-switch check).
+**Browser tests** — Playwright. Chromium at 320/390/768/1440/1920 and Firefox at 1280:
+**514 passed, 7 skipped, 0 failed** (the skips are viewport guards). `e2e/edulingo.spec.ts` covers the functional flows;
+`e2e/regression.spec.ts` holds one assertion group per audit finding, most of which fail on the
+pre-fix revision. `npm run e2e` builds first, so it works from a clean checkout.
+
+WebKit is opt-in — `PW_WEBKIT=1 npm run e2e` — because it needs `libavif16`, which this host does
+not have. See `FRONTEND_FIX_REPORT.md` for the Safari gap.
 
 - All 13 content routes render their `h1` and footer with no horizontal overflow; unknown route
   renders the 404 page.
@@ -386,19 +403,23 @@ Screenshots captured during the visual pass are in `screenshots/` — 26 files, 
   drawer" requirement but means the language switch sits at the bottom of the drawer on small
   screens.
 - Advice items in common-mistake entries are display-only; they are not individually checkable.
-- Bookmarks for common-mistake entries are stored in `lessons` under a `tip:` prefix and are listed
-  on `/saved` only as chapters, not as a separate group.
+- The print stylesheet is not implemented (listed as an optional next step; a sweep script reports
+  its absence rather than pretending otherwise).
+- WebKit/Safari automated coverage could not run here: the browser downloads but the host lacks
+  `libavif16`. Vietnamese shaping was verified in Chromium and Firefox; iPhone Safari still needs a
+  manual pass.
 
 ---
 
 ## 16. Recommended next steps
 
-1. Add an audio practice mode (record → compare waveform) for shadowing; requires no backend.
-2. Add spaced-repetition review over glossary bookmarks.
-3. Add print stylesheets for chapter pages so a page can be carried into a booth.
-4. Extract the glossary/scenarios data to JSON with a schema validator if non-developers will edit
+1. Install `libavif16` and run the WebKit project to complete Safari coverage.
+2. Add an audio practice mode (record → compare waveform) for shadowing; requires no backend.
+3. Add spaced-repetition review over glossary bookmarks.
+4. Add print stylesheets for chapter pages so a page can be carried into a booth.
+5. Extract the glossary/scenarios data to JSON with a schema validator if non-developers will edit
    content.
-5. Optional: an offline service worker (already fully client-side, so caching would be trivial).
+6. Optional: an offline service worker (already fully client-side, so caching would be trivial).
 
 ---
 
@@ -431,7 +452,28 @@ Machine-readable records, including Commons file titles and source URLs, live in
 `src/content/imageCredits.ts`. Adding an image means adding a matching record there — the About
 page renders that array directly.
 
-## 18. Deployment
+## 18. Audit and QA tooling
+
+Four headless scripts back the frontend audit. Each prints PASS/FAIL and exits non-zero on failure,
+so they can be wired into CI later.
+
+| Script | What it proves |
+|---|---|
+| `node scripts/contrast-audit.mjs` | Every text node on 13 routes meets WCAG 2.2 AA. Resolves colours through a canvas, because Tailwind v4 emits `oklab()`/`color-mix()` for alpha colours and a regex over `rgb()` mis-reads them. |
+| `node scripts/keyboard-audit.mjs` | Skip link is the first tab stop and targets `#main-content`; no unnamed interactive element; focus ring is drawn; the drawer locks and releases body scroll and takes focus; ⌘K search is fully keyboard-drivable. |
+| `node scripts/typography-check.mjs` | Vietnamese text is NFC-clean with no detached combining marks or replacement characters; the audit's required strings render verbatim; no clipped text; the two brand fonts load. Writes `artifacts/typography.json`. |
+| `node scripts/site-sweep.mjs` | Missing slugs, bad anchors, formula/XSS-shaped input, a throwing `localStorage.setItem`, oversized user input, and 128 internal links. Also reports whether a print stylesheet exists. |
+
+Each takes an optional base URL and defaults to `http://127.0.0.1:4173`, so they run against
+`npm run preview` or any deployed URL.
+
+`node scripts/capture.mjs <url> <label>` writes full-resolution full-page screenshots to
+`artifacts/audit/` at 320/390/768/1440 px. It scrolls through each page first so lazy images decode —
+a bare `fullPage` screenshot leaves them blank.
+
+---
+
+## 19. Deployment
 
 Live site: **https://le-minh-nhut.github.io/Khoi_Nguyen/**
 

@@ -48,7 +48,7 @@ export default function GuideLessonPage() {
       <Breadcrumbs
         items={[
           { label: t('nav.guide'), to: '/guide' },
-          { label: `Chương ${lesson.number}` },
+          { label: `${t('guide.chapter')} ${lesson.number}` },
         ]}
       />
 
@@ -108,7 +108,7 @@ export default function GuideLessonPage() {
                             : 'text-ink-muted hover:bg-canvas hover:text-ink',
                         )}
                       >
-                        <span className="tabular-nums text-[11px] text-ink-muted/70">{item.number}</span>
+                        <span className="tabular-nums text-[11px] text-ink-muted">{item.number}</span>
                         <span className="min-w-0">{item.title.vi}</span>
                       </Link>
                     </li>
@@ -148,8 +148,12 @@ export default function GuideLessonPage() {
             <h1 className="mt-3 text-[1.9rem] font-semibold leading-tight tracking-[-0.02em] sm:text-[2.3rem]">
               {lesson.title.vi}
             </h1>
-            <p className="mt-1 font-serif text-[1.05rem] italic text-ink-muted">{lesson.title.en}</p>
-            <p className="prose-guide mt-4 text-[15px]">{lesson.summary.vi}</p>
+            <p className="mt-1 font-serif text-[1.05rem] italic text-ink-muted" lang="en">
+              {lesson.title.en}
+            </p>
+            <p className="prose-guide mt-4 text-[15px]" lang="vi">
+              {lesson.summary.vi}
+            </p>
             <div className="mt-4 flex flex-wrap items-center gap-2">
               <BookmarkButton kind="lessons" id={lesson.slug} withLabel />
             </div>
@@ -171,13 +175,15 @@ export default function GuideLessonPage() {
 
           {lesson.sections.map((section, i) => (
             <section key={headingIds[i]} id={headingIds[i]} className="mt-10 scroll-mt-24">
-              <h2 className="text-h3 border-b border-divider pb-2 font-serif">{section.heading.vi}</h2>
-              <p className="mt-1 text-[12.5px] uppercase tracking-[0.08em] text-ink-muted/80">
+              <h2 className="text-h3 border-b border-divider pb-2 font-serif" lang="vi">
+                {section.heading.vi}
+              </h2>
+              <p className="mt-1 text-[12.5px] uppercase tracking-[0.08em] text-ink-muted" lang="en">
                 {section.heading.en}
               </p>
 
               {section.paragraphs?.map((paragraph) => (
-                <p key={paragraph.en.slice(0, 40)} className="prose-guide mt-3">
+                <p key={paragraph.en.slice(0, 40)} className="prose-guide mt-3" lang="vi">
                   {paragraph.vi}
                 </p>
               ))}
@@ -187,7 +193,7 @@ export default function GuideLessonPage() {
                   {section.bullets.map((bullet) => (
                     <li key={bullet.en} className="flex gap-2.5 text-[15px] leading-relaxed text-ink">
                       <span aria-hidden="true" className="mt-2.5 h-px w-2.5 shrink-0 bg-accent" />
-                      <span>{bullet.vi}</span>
+                      <span lang="vi">{bullet.vi}</span>
                     </li>
                   ))}
                 </ul>

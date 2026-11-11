@@ -1,6 +1,6 @@
 /** The shapes stored in localStorage. Keep versioned + minimal. */
 
-export type BookmarkKind = 'glossary' | 'phrases' | 'lessons' | 'scenarios';
+export type BookmarkKind = 'glossary' | 'phrases' | 'lessons' | 'tips' | 'scenarios';
 
 export type BookmarkState = Record<BookmarkKind, string[]>;
 

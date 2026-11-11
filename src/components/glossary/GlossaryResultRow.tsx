@@ -46,18 +46,18 @@ export function GlossaryResultRow({ term, query, showCategory = true }: Glossary
             </span>
           ) : null}
           <ArrowUpRight
-            className="size-3.5 shrink-0 text-ink-muted/40 transition-colors group-hover:text-accent"
+            className="size-3.5 shrink-0 text-ink-muted transition-colors group-hover:text-accent"
             aria-hidden="true"
           />
         </Link>
-        <p className="mt-0.5 text-[14px] text-accent-strong/90">
+        <p className="mt-0.5 text-[14px] text-accent-strong">
           <Highlight text={term.vi} query={query} />
         </p>
         <p className="mt-1 line-clamp-2 max-w-[62ch] text-[13px] leading-relaxed text-ink-muted">
           {term.definitionVi}
         </p>
         {category && showCategory ? (
-          <p className="mt-1.5 text-[11px] uppercase tracking-[0.1em] text-ink-muted/70">{category.label.vi}</p>
+          <p className="mt-1.5 text-[11px] uppercase tracking-[0.1em] text-ink-muted">{category.label.vi}</p>
         ) : null}
       </div>
       <BookmarkButton kind="glossary" id={term.slug} size="sm" />

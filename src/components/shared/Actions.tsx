@@ -3,8 +3,7 @@ import { useBookmark, useCopy, useI18n } from '@/hooks/useApp';
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
-
-type BookmarkKind = 'glossary' | 'phrases' | 'lessons' | 'scenarios';
+import type { BookmarkKind } from '@/types/storage';
 
 interface BookmarkButtonProps {
   kind: BookmarkKind;

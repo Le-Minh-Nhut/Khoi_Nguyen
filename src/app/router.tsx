@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { App } from './App';
+import { useI18n } from '@/hooks/useApp';
 
 const HomePage = lazy(() => import('@/pages/HomePage'));
 const AboutPage = lazy(() => import('@/pages/AboutPage'));
@@ -18,9 +19,10 @@ const SavedPage = lazy(() => import('@/pages/SavedPage'));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 
 function PageFallback() {
+  const t = useI18n();
   return (
     <div className="container-page py-20" role="status" aria-live="polite">
-      <span className="sr-only">Đang tải nội dung</span>
+      <span className="sr-only">{t('route.loading')}</span>
       <div className="h-7 w-48 animate-pulse rounded bg-divider" />
       <div className="mt-4 h-3.5 w-full max-w-xl animate-pulse rounded bg-divider/70" />
       <div className="mt-2 h-3.5 w-full max-w-md animate-pulse rounded bg-divider/60" />

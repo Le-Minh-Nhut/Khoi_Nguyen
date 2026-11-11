@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react';
-import { BookMarked, BookOpen, Languages, MessagesSquare, Trash2 } from 'lucide-react';
+import { BookMarked, BookOpen, Languages, Lightbulb, MessagesSquare, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useBookmarks } from '@/app/SettingsProvider';
 import { glossaryTerms } from '@/content/glossary';
 import { phrases } from '@/content/phrases';
 import { lessons } from '@/content/lessons';
 import { scenarios } from '@/content/scenarios';
+import { tips } from '@/content/tips';
 import { useI18n } from '@/hooks/useApp';
 import { PageHeader, StatPill } from '@/components/shared/PageHeader';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
@@ -42,18 +43,29 @@ export default function SavedPage() {
         id: phrase.id,
         title: phrase.en,
         subtitle: phrase.vi,
-        href: `/phrase-bank#${phrase.id}`,
+        href: `/phrase-bank?phrase=${phrase.id}`,
       }));
 
     const lessonRows: SavedRow[] = bookmarks.lessons
-      .filter((id) => !id.startsWith('tip:'))
       .map((slug) => lessons.find((lesson) => lesson.slug === slug))
       .filter((lesson): lesson is NonNullable<typeof lesson> => lesson !== undefined)
       .map((lesson) => ({
         id: lesson.slug,
         title: lesson.title.vi,
-        subtitle: `Chương ${lesson.number} · ${lesson.title.en}`,
+        subtitle: `${t('guide.chapter')} ${lesson.number} · ${lesson.title.en}`,
         href: `/guide/${lesson.slug}`,
+      }));
+
+    // Tips used to be filed under `lessons` as `tip:<id>` and vanished from this
+    // page; they now have their own kind and link straight to the open tip.
+    const tipRows: SavedRow[] = bookmarks.tips
+      .map((id) => tips.find((tip) => tip.id === id))
+      .filter((tip): tip is NonNullable<typeof tip> => tip !== undefined)
+      .map((tip) => ({
+        id: tip.id,
+        title: tip.title.vi,
+        subtitle: `${t('label.problem')} · ${tip.title.en}`,
+        href: `/tips?tip=${tip.id}`,
       }));
 
     const scenarioRows: SavedRow[] = bookmarks.scenarios
@@ -70,12 +82,17 @@ export default function SavedPage() {
       { key: 'glossary' as const, label: t('saved.glossary'), icon: BookOpen, rows: glossaryRows },
       { key: 'phrases' as const, label: t('saved.phrases'), icon: Languages, rows: phraseRows },
       { key: 'lessons' as const, label: t('saved.lessons'), icon: BookMarked, rows: lessonRows },
+      { key: 'tips' as const, label: t('saved.tips'), icon: Lightbulb, rows: tipRows },
       { key: 'scenarios' as const, label: t('saved.scenarios'), icon: MessagesSquare, rows: scenarioRows },
     ].filter((group) => group.rows.length > 0);
   }, [bookmarks, t]);
 
+  // A bookmark whose source entry was removed (or renamed) still counts toward
+  // the badge, so the page says so instead of silently hiding it.
+  const orphanCount = count - groups.reduce((total, group) => total + group.rows.length, 0);
+
   const clearAll = () => {
-    for (const kind of ['glossary', 'phrases', 'lessons', 'scenarios'] as const) {
+    for (const kind of ['glossary', 'phrases', 'lessons', 'tips', 'scenarios'] as const) {
       for (const id of bookmarks[kind]) remove(kind, id);
     }
     setConfirming(false);
@@ -88,7 +105,7 @@ export default function SavedPage() {
         eyebrow={t('nav.saved')}
         title={t('saved.title')}
         lede={t('saved.lede')}
-        meta={<StatPill label="mục đã lưu" value={String(count)} />}
+        meta={<StatPill label={t('saved.count')} value={String(count)} />}
         actions={
           count > 0 ? (
             confirming ? (
@@ -112,7 +129,20 @@ export default function SavedPage() {
       />
 
       <div className="mt-8">
-        {groups.length === 0 ? (
+        {groups.length === 0 && count > 0 ? (
+          // The badge says N items but none resolve: say so rather than claim
+          // "nothing saved yet" while the counter disagrees.
+          <div
+            className="rounded-card border border-dashed border-divider-strong bg-surface/60 px-6 py-10 text-center"
+            role="status"
+          >
+            <p className="font-serif text-lg font-semibold text-ink">{t('saved.missing')}</p>
+            <p className="mx-auto mt-1.5 max-w-md text-sm text-ink-muted">{t('saved.missingHint')}</p>
+            <Button variant="secondary" size="sm" className="mt-5" onClick={() => setConfirming(true)}>
+              {t('saved.clearAll')}
+            </Button>
+          </div>
+        ) : groups.length === 0 ? (
           <EmptyState
             title={t('saved.empty')}
             description={t('saved.emptyHint')}
@@ -167,6 +197,12 @@ export default function SavedPage() {
                 </section>
               );
             })}
+
+            {orphanCount > 0 ? (
+              <p className="rounded-card border border-dashed border-divider-strong bg-surface/60 px-4 py-3 text-[13px] text-ink-muted" role="status">
+                {orphanCount} {t('saved.missing')}
+              </p>
+            ) : null}
           </div>
         )}
       </div>

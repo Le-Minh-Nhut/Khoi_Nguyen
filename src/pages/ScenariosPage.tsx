@@ -47,9 +47,9 @@ export default function ScenariosPage() {
         lede={t('scenarios.lede')}
         meta={
           <>
-            <StatPill label="tình huống" value={String(scenarios.length)} />
+            <StatPill label={t('nav.scenarios')} value={String(scenarios.length)} />
             <StatPill
-              label="lượt thoại"
+              label={t('label.turns')}
               value={String(scenarios.reduce((sum, item) => sum + item.dialogue.length, 0))}
             />
           </>
@@ -85,13 +85,21 @@ export default function ScenariosPage() {
               <h2 className="mt-2 text-[1.15rem] font-semibold leading-snug text-ink transition-colors group-hover:text-accent-strong">
                 {scenario.title.vi}
               </h2>
-              <p className="mt-0.5 text-[12.5px] text-ink-muted">{scenario.title.en}</p>
+              <p className="mt-0.5 text-[12.5px] text-ink-muted" lang="en">
+                {scenario.title.en}
+              </p>
 
-              <p className="mt-3 flex-1 text-[13.5px] leading-relaxed text-ink-muted">{scenario.setting.vi}</p>
+              <p className="mt-3 flex-1 text-[13.5px] leading-relaxed text-ink-muted" lang="vi">
+                {scenario.setting.vi}
+              </p>
 
               <div className="mt-4 flex flex-wrap gap-1.5">
-                <Badge tone="accent">{scenario.dialogue.length} lượt thoại</Badge>
-                <Badge>{scenario.terms.length} thuật ngữ</Badge>
+                <Badge tone="accent">
+                  {scenario.dialogue.length} {t('label.turns')}
+                </Badge>
+                <Badge>
+                  {scenario.terms.length} {t('label.terms')}
+                </Badge>
               </div>
 
               <span className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-medium text-accent-strong">

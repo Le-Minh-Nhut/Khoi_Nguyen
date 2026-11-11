@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useBookmarks, useSettings } from '@/app/SettingsProvider';
 import { translate, type UiKey } from '@/content/translations';
 import { copyText } from '@/lib/storage';
+import type { BookmarkKind } from '@/types/storage';
 
 /** Access the UI dictionary for the active language. */
 export function useI18n() {
@@ -39,7 +40,7 @@ export function useCopy(resetMs = 1800) {
 }
 
 /** Bookmark controls for one item. */
-export function useBookmark(kind: 'glossary' | 'phrases' | 'lessons' | 'scenarios', id: string) {
+export function useBookmark(kind: BookmarkKind, id: string) {
   const { isSaved, toggle } = useBookmarks();
   const saved = isSaved(kind, id);
   const onToggle = useCallback(() => toggle(kind, id), [toggle, kind, id]);

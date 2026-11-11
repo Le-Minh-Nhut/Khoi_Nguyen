@@ -1,8 +1,14 @@
 import { useState } from 'react';
 import { Check, Download, Info, Plus, RotateCcw, Trash2 } from 'lucide-react';
 import type { GlossaryTemplateRow, NoteTemplateValues } from '@/types/storage';
+import type { UiKey } from '@/content/translations';
 import { useI18n } from '@/hooks/useApp';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import {
+  normalizeChecklist,
+  normalizeGlossaryRows,
+  normalizeNoteValues,
+} from '@/lib/storageSchema';
 import { storageKeys, downloadFile, toCsv } from '@/lib/storage';
 import { formatPercent, uid } from '@/lib/format';
 import { cn } from '@/lib/cn';
@@ -67,7 +73,7 @@ export default function ToolkitPage() {
 }
 
 function useChecklist(key: string) {
-  const [state, setState] = useLocalStorage<ChecklistState>(key, {});
+  const [state, setState] = useLocalStorage<ChecklistState>(key, {}, normalizeChecklist);
   const toggle = (id: string) => setState((current) => ({ ...current, [id]: !current[id] }));
   const reset = () => setState({});
   return { state, toggle, reset };
@@ -134,7 +140,9 @@ function PreparationChecklist() {
                 >
                   {item.label.vi}
                 </label>
-                <p className="text-[12px] text-ink-muted/90">{item.label.en}</p>
+                <p className="text-[12px] text-ink-muted" lang="en">
+                  {item.label.en}
+                </p>
                 {item.detail ? (
                   <p className="mt-1 text-[12.5px] leading-relaxed text-ink-muted">{item.detail.vi}</p>
                 ) : null}
@@ -206,7 +214,11 @@ function QualityChecklist() {
 
 function GlossaryTemplate() {
   const t = useI18n();
-  const [rows, setRows] = useLocalStorage<GlossaryTemplateRow[]>(storageKeys.glossaryTemplate, []);
+  const [rows, setRows] = useLocalStorage<GlossaryTemplateRow[]>(
+    storageKeys.glossaryTemplate,
+    [],
+    normalizeGlossaryRows,
+  );
   const [exported, setExported] = useState(false);
 
   const update = (id: string, field: keyof GlossaryTemplateRow, value: string) =>
@@ -221,8 +233,9 @@ function GlossaryTemplate() {
       setExported(false);
       return;
     }
+    // Header matches the on-screen table, so the file reads the same as the UI.
     const csv = toCsv([
-      ['English term', 'Vietnamese term', 'Context'],
+      [t('toolkit.colEn'), t('toolkit.colVi'), t('toolkit.colContext')],
       ...filled.map((row) => [row.en, row.vi, row.context]),
     ]);
     downloadFile('edulingo-glossary.csv', csv);
@@ -263,8 +276,8 @@ function GlossaryTemplate() {
 
         {rows.length === 0 ? (
           <EmptyState
-            title="Bảng thuật ngữ đang trống"
-            description="Thêm dòng đầu tiên cho thuật ngữ bạn cần nhớ trước sự kiện."
+            title={t('toolkit.glossaryEmpty')}
+            description={t('toolkit.glossaryEmptyHint')}
             action={
               <Button size="sm" onClick={addRow}>
                 <Plus className="size-3.5" aria-hidden="true" />
@@ -279,13 +292,13 @@ function GlossaryTemplate() {
               <thead>
                 <tr className="border-b border-divider">
                   <th scope="col" className="w-[32%] px-2 py-2 text-[11px] font-semibold uppercase tracking-wide text-ink-muted">
-                    English term
+                    {t('toolkit.colEn')}
                   </th>
                   <th scope="col" className="w-[32%] px-2 py-2 text-[11px] font-semibold uppercase tracking-wide text-ink-muted">
-                    Vietnamese term
+                    {t('toolkit.colVi')}
                   </th>
                   <th scope="col" className="px-2 py-2 text-[11px] font-semibold uppercase tracking-wide text-ink-muted">
-                    Context
+                    {t('toolkit.colContext')}
                   </th>
                   <th scope="col" className="w-10 px-2 py-2">
                     <span className="sr-only">{t('action.remove')}</span>
@@ -299,7 +312,7 @@ function GlossaryTemplate() {
                       <Input
                         value={row.en}
                         onChange={(event) => update(row.id, 'en', event.target.value)}
-                        aria-label={`English term, row ${index + 1}`}
+                        aria-label={`${t('toolkit.colEn')}, ${t('toolkit.rowLabel')} ${index + 1}`}
                         className="h-9 border-transparent bg-transparent px-2 hover:border-divider-strong focus-visible:border-accent"
                       />
                     </td>
@@ -307,7 +320,7 @@ function GlossaryTemplate() {
                       <Input
                         value={row.vi}
                         onChange={(event) => update(row.id, 'vi', event.target.value)}
-                        aria-label={`Vietnamese term, row ${index + 1}`}
+                        aria-label={`${t('toolkit.colVi')}, ${t('toolkit.rowLabel')} ${index + 1}`}
                         className="h-9 border-transparent bg-transparent px-2 hover:border-divider-strong focus-visible:border-accent"
                       />
                     </td>
@@ -315,7 +328,7 @@ function GlossaryTemplate() {
                       <Input
                         value={row.context}
                         onChange={(event) => update(row.id, 'context', event.target.value)}
-                        aria-label={`Context, row ${index + 1}`}
+                        aria-label={`${t('toolkit.colContext')}, ${t('toolkit.rowLabel')} ${index + 1}`}
                         className="h-9 border-transparent bg-transparent px-2 hover:border-divider-strong focus-visible:border-accent"
                       />
                     </td>
@@ -324,7 +337,7 @@ function GlossaryTemplate() {
                         variant="ghost"
                         size="iconSm"
                         onClick={() => removeRow(row.id)}
-                        aria-label={`${t('action.remove')} row ${index + 1}`}
+                        aria-label={`${t('action.remove')} ${t('toolkit.rowLabel')} ${index + 1}`}
                         className="text-ink-muted hover:text-error"
                       >
                         <Trash2 className="size-3.5" aria-hidden="true" />
@@ -343,19 +356,23 @@ function GlossaryTemplate() {
 
 function NoteTemplate() {
   const t = useI18n();
-  const [values, setValues] = useLocalStorage<NoteTemplateValues>(storageKeys.noteTemplate, NOTE_TEMPLATE_EMPTY);
+  const [values, setValues] = useLocalStorage<NoteTemplateValues>(
+    storageKeys.noteTemplate,
+    NOTE_TEMPLATE_EMPTY,
+    normalizeNoteValues,
+  );
 
-  const fields: Array<{ key: keyof NoteTemplateValues; label: string; hint: string; rows: number }> = [
-    { key: 'topic', label: 'Chủ đề', hint: 'Topic · what the session is about', rows: 2 },
-    { key: 'mainIdea', label: 'Ý chính', hint: 'Main idea · the argument, in one or two lines', rows: 3 },
-    { key: 'names', label: 'Tên và tổ chức', hint: 'Names and organizations · read titles as given', rows: 3 },
-    { key: 'numbers', label: 'Số liệu và ngày tháng', hint: 'Numbers and dates · write digits, attach units', rows: 2 },
-    { key: 'terminology', label: 'Thuật ngữ then chốt', hint: 'Key terminology · EN = VI, one per line', rows: 3 },
-    { key: 'actions', label: 'Điểm cần hành động', hint: 'Action points · who does what by when', rows: 3 },
+  const fields: Array<{ key: keyof NoteTemplateValues; label: UiKey; hint: UiKey; rows: number }> = [
+    { key: 'topic', label: 'toolkit.note.topic', hint: 'toolkit.note.topic.hint', rows: 2 },
+    { key: 'mainIdea', label: 'toolkit.note.mainIdea', hint: 'toolkit.note.mainIdea.hint', rows: 3 },
+    { key: 'names', label: 'toolkit.note.names', hint: 'toolkit.note.names.hint', rows: 3 },
+    { key: 'numbers', label: 'toolkit.note.numbers', hint: 'toolkit.note.numbers.hint', rows: 2 },
+    { key: 'terminology', label: 'toolkit.note.terminology', hint: 'toolkit.note.terminology.hint', rows: 3 },
+    { key: 'actions', label: 'toolkit.note.actions', hint: 'toolkit.note.actions.hint', rows: 3 },
   ];
 
   const asText = fields
-    .map((field) => `${field.label}\n${values[field.key] || '—'}`)
+    .map((field) => `${t(field.label)}\n${values[field.key] || '—'}`)
     .join('\n\n');
 
   return (
@@ -391,13 +408,13 @@ function NoteTemplate() {
         {fields.map((field) => (
           <div key={field.key}>
             <label htmlFor={`note-${field.key}`} className="mb-1 block text-[13px] font-medium text-ink">
-              {field.label}
+              {t(field.label)}
             </label>
-            <p className="mb-1.5 text-[11.5px] text-ink-muted">{field.hint}</p>
+            <p className="mb-1.5 text-[11.5px] text-ink-muted">{t(field.hint)}</p>
             <Textarea
               id={`note-${field.key}`}
               rows={field.rows}
-              value={values[field.key]}
+                value={values[field.key]}
               onChange={(event) =>
                 setValues((current) => ({ ...current, [field.key]: event.target.value }))
               }
@@ -421,8 +438,7 @@ function ReferenceList() {
         </h2>
         <p className="mt-0.5 flex items-start gap-1.5 text-[12.5px] leading-relaxed text-ink-muted">
           <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
-          Liên kết ngoài, mở trong tab mới. Không có liên kết nào mang tính tài trợ hay xác nhận từ tổ chức được
-          nhắc tới.
+          {t('toolkit.externalNote')}
         </p>
       </div>
       <ul className="divide-y divide-divider">

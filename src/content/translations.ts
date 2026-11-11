@@ -6,6 +6,83 @@ import type { Bilingual, UiLang } from '@/types/content';
  */
 export const ui = {
   'brand.tagline': { en: 'Bridge Languages. Connect Education.', vi: 'Kết nối ngôn ngữ. Kết nối giáo dục.' },
+  'home.eyebrow': { en: 'Bilingual handbook · Vietnamese — English', vi: 'Sổ tay song ngữ · Việt — Anh' },
+  'home.lede': {
+    en: 'A practical Vietnamese–English translation and interpretation guide for educational events.',
+    vi: 'Sổ tay dịch và phiên dịch Việt–Anh thực dụng cho các sự kiện giáo dục.',
+  },
+  'home.lede2': {
+    en: 'Find essential terminology, explore professional expressions, and prepare for real communication situations in international educational settings.',
+    vi: 'Tra thuật ngữ cốt lõi, xem các mẫu câu chuyên nghiệp và chuẩn bị cho những tình huống giao tiếp thật trong môi trường giáo dục quốc tế.',
+  },
+  'home.stat.terms': { en: 'Terms', vi: 'Thuật ngữ' },
+  'home.stat.phrases': { en: 'Expressions', vi: 'Mẫu câu' },
+  'home.stat.scenarios': { en: 'Scenarios', vi: 'Tình huống' },
+  'home.browse.title': { en: 'Browse by educational event', vi: 'Khám phá theo loại sự kiện' },
+  'home.browse.lede': {
+    en: 'Eight subject groups covering what actually comes up on the day — from admissions paperwork to a signing ceremony.',
+    vi: 'Tám nhóm chủ đề bao trùm những gì thực sự xuất hiện trong ngày — từ hồ sơ tuyển sinh đến lễ ký kết.',
+  },
+  'home.pathway.eyebrow': { en: 'Before · During · After the event', vi: 'Trước · Trong · Sau sự kiện' },
+  'home.pathway.title': {
+    en: 'The week around an interpreting assignment',
+    vi: 'Tuần làm việc quanh một phiên dịch vụ',
+  },
+  'home.pathway.lede': {
+    en: 'Preparation decides most of the outcome. Each phase has a matching tool in this handbook.',
+    vi: 'Chuẩn bị quyết định phần lớn kết quả. Mỗi giai đoạn có một công cụ cụ thể trong sổ tay này.',
+  },
+  'home.band.heading': { en: 'From the field', vi: 'Ảnh hiện trường' },
+  'home.band.alt': {
+    en: 'Graduates in caps and gowns lined up in front of a lecture hall',
+    vi: 'Sinh viên trong lễ tốt nghiệp, đội mũ cử nhân xếp hàng trước giảng đường',
+  },
+  'home.band.caption': {
+    en: 'Graduation is when terminology, titles, and protocol collide hardest — and when a mistranslated line has the clearest consequences.',
+    vi: 'Lễ tốt nghiệp là thời điểm thuật ngữ, chức danh và nghi thức gặp nhau dày đặc nhất — và cũng là lúc một bản phiên dịch sai gây hậu quả rõ nhất.',
+  },
+  'home.resources.eyebrow': { en: 'Learning resources', vi: 'Tài nguyên học tập' },
+  'home.resources.title': { en: 'Where to go next', vi: 'Đi tiếp từ đâu' },
+  'home.cta.title': { en: 'Not sure where to start?', vi: 'Chưa biết bắt đầu từ đâu?' },
+  'home.cta.body': {
+    en: 'Read the first chapter of the guide, then try a scenario with the translation hidden.',
+    vi: 'Đọc chương một của phần hướng dẫn, rồi thử một tình huống với bản dịch đang ẩn.',
+  },
+  'home.cta.note': { en: 'Field note', vi: 'Ghi chú thực địa' },
+  'hero.doc.label': {
+    en: 'Preview of a bilingual briefing sheet used at an international education forum',
+    vi: 'Bản xem trước tài liệu song ngữ tại một diễn đàn giáo dục quốc tế',
+  },
+  // The hero document is bilingual by design: both languages are always on
+  // screen, so these are fixed strings rather than interface chrome.
+  'hero.doc.forum.en': { en: 'International Education Forum', vi: 'International Education Forum' },
+  'hero.doc.forum.vi': { en: 'Diễn đàn Giáo dục Quốc tế', vi: 'Diễn đàn Giáo dục Quốc tế' },
+  'hero.doc.sentence.en': {
+    en: 'We look forward to strengthening our academic partnership.',
+    vi: 'We look forward to strengthening our academic partnership.',
+  },
+  'hero.doc.sentence.vi': {
+    en: 'Chúng tôi mong muốn tiếp tục thắt chặt quan hệ hợp tác học thuật.',
+    vi: 'Chúng tôi mong muốn tiếp tục thắt chặt quan hệ hợp tác học thuật.',
+  },
+  'hero.doc.term.en': { en: 'Academic Partnership', vi: 'Academic Partnership' },
+  'hero.doc.term.vi': { en: 'Quan hệ hợp tác học thuật', vi: 'Quan hệ hợp tác học thuật' },
+  'hero.doc.session': { en: 'Plenary · 09:15 — 09:45', vi: 'Phiên toàn thể · 09:15 — 09:45' },
+  'hero.doc.mode': { en: 'Consecutive', vi: 'Phiên dịch đuổi' },
+  'label.turns': { en: 'dialogue turns', vi: 'lượt thoại' },
+  'label.tipsCount': { en: 'tips', vi: 'mẹo' },
+  'label.tip': { en: 'Tip', vi: 'Lỗi' },
+  'guide.readTime': { en: 'min read', vi: 'phút đọc' },
+  'about.credits': { en: 'Image sources', vi: 'Nguồn ảnh' },
+  'about.credits.lede': {
+    en: 'Every photograph is a local WebP copy of a Wikimedia Commons file under a free licence. Attribution is shown next to each image and repeated here.',
+    vi: 'Mọi ảnh là bản WebP nội bộ của tệp trên Wikimedia Commons theo giấy phép tự do. Ghi công được hiển thị cạnh mỗi ảnh và lặp lại ở đây.',
+  },
+  'about.credits.file': { en: 'File', vi: 'Tệp' },
+  'about.credits.author': { en: 'Author', vi: 'Tác giả' },
+  'about.credits.license': { en: 'Licence', vi: 'Giấy phép' },
+  'about.credits.source': { en: 'Source', vi: 'Nguồn' },
+  'about.credits.open': { en: 'Open on Wikimedia Commons', vi: 'Mở trên Wikimedia Commons' },
   'nav.home': { en: 'Home', vi: 'Trang chủ' },
   'nav.glossary': { en: 'Glossary', vi: 'Thuật ngữ' },
   'nav.phrases': { en: 'Phrase Bank', vi: 'Mẫu câu' },
@@ -141,6 +218,18 @@ export const ui = {
   'scenarios.open': { en: 'Open scenario', vi: 'Xem tình huống' },
   'scenarios.copyDialogue': { en: 'Copy dialogue', vi: 'Sao chép hội thoại' },
 
+  'toolkit.note.topic': { en: 'Topic', vi: 'Chủ đề' },
+  'toolkit.note.topic.hint': { en: 'What the session is about', vi: 'Buổi làm việc nói về vấn đề gì' },
+  'toolkit.note.mainIdea': { en: 'Main idea', vi: 'Ý chính' },
+  'toolkit.note.mainIdea.hint': { en: 'The argument, in one or two lines', vi: 'Luận điểm, trong một hai dòng' },
+  'toolkit.note.names': { en: 'Names and organisations', vi: 'Tên và tổ chức' },
+  'toolkit.note.names.hint': { en: 'Read titles exactly as given', vi: 'Đọc chức danh đúng như văn bản' },
+  'toolkit.note.numbers': { en: 'Figures and dates', vi: 'Số liệu và ngày tháng' },
+  'toolkit.note.numbers.hint': { en: 'Write digits, attach units', vi: 'Ghi chữ số, kèm đơn vị' },
+  'toolkit.note.terminology': { en: 'Key terminology', vi: 'Thuật ngữ then chốt' },
+  'toolkit.note.terminology.hint': { en: 'EN = VI, one per line', vi: 'EN = VI, mỗi dòng một thuật ngữ' },
+  'toolkit.note.actions': { en: 'Action points', vi: 'Điểm cần hành động' },
+  'toolkit.note.actions.hint': { en: 'Who does what, by when', vi: 'Ai làm gì, hạn khi nào' },
   'toolkit.title': { en: 'Translation toolkit', vi: 'Bộ công cụ phiên dịch' },
   'toolkit.lede': {
     en: 'Five working tools for the week before the event: preparation checklists, a quality review pass, a glossary you can export, a note-taking sheet, and reference sources.',
@@ -193,6 +282,7 @@ export const ui = {
   'practice.level.intermediate': { en: 'Intermediate', vi: 'Trung cấp' },
   'practice.level.advanced': { en: 'Advanced', vi: 'Nâng cao' },
   'practice.attempts': { en: 'attempts', vi: 'lần làm' },
+  'practice.words': { en: 'words', vi: 'từ' },
 
   'saved.title': { en: 'Saved items', vi: 'Nội dung đã lưu' },
   'saved.lede': {
@@ -210,8 +300,109 @@ export const ui = {
   'saved.scenarios': { en: 'Scenarios', vi: 'Tình huống' },
   'saved.clearAll': { en: 'Remove all bookmarks', vi: 'Xóa toàn bộ nội dung đã lưu' },
   'saved.clearConfirm': { en: 'Remove all saved items? This cannot be undone.', vi: 'Xóa toàn bộ nội dung đã lưu? Không thể hoàn tác.' },
+  'saved.tips': { en: 'Tips & mistakes', vi: 'Lưu ý & lỗi' },
+  'saved.count': { en: 'saved items', vi: 'mục đã lưu' },
   'saved.missing': { en: 'This item is no longer in the handbook.', vi: 'Nội dung này không còn trong sổ tay.' },
+  'saved.missingHint': {
+    en: 'The bookmark is still stored, but the entry it points at has been removed or renamed.',
+    vi: 'Nội dung đã lưu vẫn còn, nhưng mục mà nó trỏ tới đã bị xoá hoặc đổi tên.',
+  },
 
+  'about.chapters': { en: 'chapters', vi: 'chương' },
+  'about.minutes': { en: 'min read', vi: 'phút đọc' },
+  'about.background': { en: 'Project background', vi: 'Bối cảnh dự án' },
+  'about.background.p1': {
+    en: 'International education events in Vietnam run continuously: academic conferences, seminars, MOU signing ceremonies, study-abroad consultations, student exchange programmes. An interpreter in these settings needs more than vocabulary — they need to know which term is standard, how a title must be read, and when a fluent rendering distorts the meaning.',
+    vi: 'Các sự kiện giáo dục quốc tế tại Việt Nam diễn ra liên tục: hội nghị học thuật, hội thảo, lễ ký kết biên bản ghi nhớ, buổi tư vấn du học, chương trình trao đổi sinh viên. Người phiên dịch trong những bối cảnh này không chỉ cần vốn từ, mà cần biết thuật ngữ nào là chuẩn mực, chức danh nào phải đọc ra sao, và khi nào một cách dịch trôi chảy lại làm sai lệch ý.',
+  },
+  'about.background.p2': {
+    en: 'EduLingo Guide exists to close that gap: a quick-reference handbook with translation notes, organised the way an interpreter actually prepares — look up the term, learn the technique, then practise.',
+    vi: 'EduLingo Guide ra đời để lấp khoảng trống đó: một sổ tay tra cứu nhanh, có chú thích dịch thuật, tổ chức theo đúng cách một phiên dịch viên chuẩn bị cho sự kiện — tra thuật ngữ, học kỹ thuật, rồi luyện tập.',
+  },
+  'about.mission': { en: 'Mission', vi: 'Sứ mệnh' },
+  'about.mission.body': {
+    en: 'Give interpreters working in education accurate, natural phrasing in both languages, so that academic content and cooperation commitments are not distorted in translation.',
+    vi: 'Giúp người làm công tác phiên dịch trong giáo dục có được cách diễn đạt chính xác và tự nhiên bằng cả hai ngôn ngữ, để nội dung học thuật và các cam kết hợp tác không bị bóp méo qua bản dịch.',
+  },
+  'about.vision': { en: 'Vision', vi: 'Tầm nhìn' },
+  'about.vision.body': {
+    en: 'An open, free, maintained reference that any student or international relations officer can use before an event without a long training course. Bilingual content, not just a word list.',
+    vi: 'Một nguồn tham khảo mở, miễn phí, được cập nhật, mà bất kỳ sinh viên hay cán bộ hợp tác quốc tế nào cũng có thể dùng trước một sự kiện mà không cần khóa đào tạo dài hạn. Nội dung song ngữ, không chỉ là danh sách từ.',
+  },
+  'about.audience': { en: 'Who it is for', vi: 'Đối tượng sử dụng' },
+  'about.features': { en: 'What the site does', vi: 'Chức năng của website' },
+  'about.venueCaption': {
+    en: 'A lecture hall — where most educational interpreting actually happens.',
+    vi: 'Giảng đường — nơi phần lớn công việc phiên dịch giáo dục thực sự diễn ra.',
+  },
+  'about.venueAlt': {
+    en: 'A university lecture hall during a class, students seated in rows',
+    vi: 'Giảng đường đại học trong giờ giảng, sinh viên ngồi theo dãy bàn',
+  },
+  'about.credits.lede2': {
+    en: 'Photographs come from Wikimedia Commons under public licences (Public Domain, CC0, CC BY, CC BY-SA), stored locally and never fetched from an external server at runtime. Each one is cropped and recompressed for this site.',
+    vi: 'Ảnh minh hoạ lấy từ Wikimedia Commons, giấy phép công khai (Public Domain, CC0, CC BY, CC BY-SA), lưu trữ cục bộ và không tải từ máy chủ ngoài khi chạy. Mỗi ảnh đã được cắt và nén lại cho trang web.',
+  },
+  'about.disclaimer': { en: 'Disclaimer', vi: 'Tuyên bố miễn trừ' },
+  'about.disclaimerEn': {
+    en: 'This project is not affiliated with, endorsed by, or sponsored by any university, ministry, or professional body. Names of institutions in the practice material are illustrative.',
+    vi: 'Dự án này không trực thuộc, không được bảo trợ hay xác nhận bởi bất kỳ trường đại học, bộ ngành hay tổ chức nghề nghiệp nào. Tên các tổ chức trong phần luyện tập chỉ mang tính minh hoạ.',
+  },
+  'about.principles': { en: 'Design principles', vi: 'Nguyên tắc thiết kế' },
+  'about.principles.1': {
+    en: 'Bilingual on the page itself — translations are never hidden behind a tab.',
+    vi: 'Song ngữ ngay trên trang, không giấu bản dịch sau một tab.',
+  },
+  'about.principles.2': {
+    en: 'A note whenever a literal rendering would mislead.',
+    vi: 'Chú thích khi một cách dịch sát chữ sẽ gây hiểu sai.',
+  },
+  'about.principles.3': {
+    en: 'Open-ended translations are never auto-graded — a suggested rendering is offered for comparison.',
+    vi: 'Không tự động chấm điểm bản dịch mở — chỉ đưa bản gợi ý để đối chiếu.',
+  },
+  'about.principles.4': {
+    en: 'Everything runs in the browser; no server, no data collection.',
+    vi: 'Toàn bộ nội dung chạy trong trình duyệt; không có máy chủ, không thu thập dữ liệu.',
+  },
+  'about.tech': { en: 'Technology', vi: 'Công nghệ' },
+  'about.tech.body': {
+    en: 'React 19, TypeScript, Vite, Tailwind CSS v4, Radix UI, React Router, Lucide. Educational data lives in TypeScript modules; preferences and saved items use localStorage.',
+    vi: 'React 19, TypeScript, Vite, Tailwind CSS v4, Radix UI, React Router, Lucide. Dữ liệu giáo dục nằm trong các tệp TypeScript; tùy chọn và nội dung đã lưu dùng localStorage.',
+  },
+  'about.start': { en: 'Getting started', vi: 'Bắt đầu' },
+  'about.start.body': {
+    en: 'Read chapter one, then open a scenario and hide the translation to test yourself.',
+    vi: 'Đọc chương một, rồi mở một tình huống và ẩn bản dịch để tự thử.',
+  },
+  'about.feature.glossary': {
+    en: 'Bilingual terminology across eight domains, searchable without diacritics and by abbreviation.',
+    vi: 'Tra cứu thuật ngữ song ngữ theo tám nhóm chủ đề, tìm được không dấu, tìm theo từ viết tắt.',
+  },
+  'about.feature.phrases': {
+    en: 'A bank of 48 professional expressions with translation toggles, copy, and bookmarks.',
+    vi: 'Ngân hàng 48 mẫu câu chuyên nghiệp, hiện/ẩn bản dịch, sao chép và lưu lại.',
+  },
+  'about.feature.guide': {
+    en: 'Eight chapters on interpreting practice, with translation notes and comparison tables.',
+    vi: 'Tám chương hướng dẫn nghề phiên dịch, có ghi chú dịch thuật và bảng so sánh.',
+  },
+  'about.feature.scenarios': {
+    en: 'Six realistic scenarios with full bilingual dialogue and on-the-spot tips.',
+    vi: 'Sáu tình huống thực tế với hội thoại song ngữ đầy đủ và mẹo xử lý tại chỗ.',
+  },
+  'about.feature.toolkit': {
+    en: 'Preparation toolkit: checklists, an exportable glossary, and a note-taking template.',
+    vi: 'Công cụ chuẩn bị: danh mục kiểm tra, bảng thuật ngữ xuất CSV, mẫu ghi chú.',
+  },
+  'about.audience.1': { en: 'Translation and interpretation students', vi: 'Sinh viên ngành biên–phiên dịch' },
+  'about.audience.2': { en: 'Beginner and intermediate interpreters', vi: 'Phiên dịch viên mới vào nghề và trình độ trung cấp' },
+  'about.audience.3': { en: 'Students supporting bilingual education events', vi: 'Sinh viên hỗ trợ các sự kiện giáo dục song ngữ' },
+  'about.audience.4': { en: 'University international relations staff', vi: 'Cán bộ hợp tác quốc tế của các trường đại học' },
+  'about.audience.5': { en: 'Anyone assisting international educational communication', vi: 'Những người hỗ trợ giao tiếp quốc tế trong giáo dục' },
+  'label.sections': { en: 'sections', vi: 'mục' },
+  'label.objectivesShort': { en: 'objectives', vi: 'mục tiêu' },
+  'label.tipsShort': { en: 'tips', vi: 'mẹo' },
   'about.title': { en: 'About this handbook', vi: 'Về sổ tay này' },
   'about.lede': {
     en: 'EduLingo Guide is an independent educational project: a practical Vietnamese–English reference for the people who make international education events work.',
@@ -232,6 +423,19 @@ export const ui = {
   'footer.rights': { en: 'Independent educational project. Content written for this handbook.', vi: 'Dự án giáo dục độc lập. Nội dung được biên soạn cho sổ tay này.' },
   'footer.local': { en: 'Runs entirely in your browser. Bookmarks stay on this device.', vi: 'Chạy hoàn toàn trong trình duyệt. Nội dung đã lưu chỉ nằm trên thiết bị này.' },
 
+  'action.copyBoth': { en: 'Copy both', vi: 'Sao chép cả hai' },
+  'action.copyRow': { en: 'Copy', vi: 'Sao chép' },
+  'label.problemExample': { en: 'Problem', vi: 'Vấn đề' },
+  'toolkit.glossaryEmpty': { en: 'The glossary table is empty', vi: 'Bảng thuật ngữ đang trống' },
+  'toolkit.glossaryEmptyHint': { en: 'Add the first row for a term you need before the event.', vi: 'Thêm dòng đầu tiên cho thuật ngữ bạn cần nhớ trước sự kiện.' },
+  'toolkit.externalNote': { en: 'External links open in a new tab. None of them are sponsored or endorsed by the organisations named.', vi: 'Liên kết ngoài, mở trong tab mới. Không có liên kết nào mang tính tài trợ hay xác nhận từ tổ chức được nhắc tới.' },
+  'toolkit.colEn': { en: 'English term', vi: 'Thuật ngữ tiếng Anh' },
+  'toolkit.colVi': { en: 'Vietnamese term', vi: 'Thuật ngữ tiếng Việt' },
+  'toolkit.colContext': { en: 'Context', vi: 'Ngữ cảnh' },
+  'toolkit.rowLabel': { en: 'row', vi: 'dòng' },
+  'search.clear': { en: 'Clear search', vi: 'Xóa tìm kiếm' },
+  'search.keys': { en: '↑↓ select · ↵ open · Esc close', vi: '↑↓ chọn · ↵ mở · Esc đóng' },
+  'route.loading': { en: 'Loading content', vi: 'Đang tải nội dung' },
   'notFound.title': { en: 'This page is not in the handbook', vi: 'Trang này không có trong sổ tay' },
   'notFound.lede': {
     en: 'The address may be mistyped, or the content may have moved. Start from the glossary, or search everything with ⌘K.',

@@ -1,6 +1,7 @@
 import { ArrowRight, Fingerprint, Layers, PenLine, Target } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useI18n } from '@/hooks/useApp';
+import { useSettings } from '@/app/SettingsProvider';
 
 const phases = [
   {
@@ -46,6 +47,8 @@ const phases = [
 
 export function EventPathway() {
   const t = useI18n();
+  const { uiLang } = useSettings();
+  const other = uiLang === 'vi' ? 'en' : 'vi';
 
   return (
     <ol className="grid gap-4 md:grid-cols-3">
@@ -61,8 +64,12 @@ export function EventPathway() {
                 <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
                   {String(index + 1).padStart(2, '0')}
                 </p>
-                <p className="font-serif text-lg font-semibold leading-tight text-ink">{phase.vi}</p>
-                <p className="text-[12px] uppercase tracking-wide text-ink-muted">{phase.en}</p>
+                <p className="font-serif text-lg font-semibold leading-tight text-ink" lang={uiLang}>
+                  {phase[uiLang]}
+                </p>
+                <p className="text-[12px] uppercase tracking-wide text-ink-muted" lang={other}>
+                  {phase[other]}
+                </p>
               </div>
             </div>
 
@@ -71,8 +78,12 @@ export function EventPathway() {
                 <li key={item.en} className="flex gap-2.5 text-[13.5px] leading-relaxed">
                   <Fingerprint className="mt-1 size-3 shrink-0 text-accent/60" aria-hidden="true" />
                   <span>
-                    <span className="block text-ink">{item.vi}</span>
-                    <span className="mt-0.5 block text-[12.5px] text-ink-muted">{item.en}</span>
+                    <span className="block text-ink" lang={uiLang}>
+                      {item[uiLang]}
+                    </span>
+                    <span className="mt-0.5 block text-[12.5px] text-ink-muted" lang={other}>
+                      {item[other]}
+                    </span>
                   </span>
                 </li>
               ))}

@@ -163,8 +163,9 @@ test.describe('toolkit', () => {
   test('glossary template adds a row and exports a CSV', async ({ page }) => {
     await page.goto('/toolkit');
     await page.getByRole('button', { name: /Thêm dòng/ }).first().click();
-    await page.getByRole('textbox', { name: 'English term, row 1' }).fill('Articulation agreement');
-    await page.getByRole('textbox', { name: 'Vietnamese term, row 1' }).fill('Thỏa thuận liên kết đào tạo');
+    // Column headers and aria-labels are localized chrome, not fixed English.
+    await page.getByRole('textbox', { name: /thuật ngữ tiếng anh, dòng 1/i }).fill('Articulation agreement');
+    await page.getByRole('textbox', { name: /thuật ngữ tiếng việt, dòng 1/i }).fill('Thỏa thuận liên kết đào tạo');
 
     const downloadPromise = page.waitForEvent('download');
     await page.getByRole('button', { name: /Xuất CSV/ }).click();
@@ -174,8 +175,10 @@ test.describe('toolkit', () => {
     const stream = await download.createReadStream();
     let content = '';
     for await (const chunk of stream) content += chunk.toString('utf8');
-    expect(content).toContain('English term,Vietnamese term,Context');
     expect(content).toContain('Articulation agreement,Thỏa thuận liên kết đào tạo');
+    // Export header row uses the same localized labels as the visible table.
+    expect(content).toContain('Thuật ngữ tiếng Anh');
+    expect(content).toContain('Ngữ cảnh');
   });
 
   test('note template saves values and reset clears them', async ({ page }) => {

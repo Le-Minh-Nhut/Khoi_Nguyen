@@ -7,7 +7,7 @@ export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
       ref={ref}
       type={type}
       className={cn(
-        'h-10 w-full rounded-lg border border-divider-strong bg-surface px-3 text-[15px] text-ink placeholder:text-ink-muted/70',
+        'h-10 w-full rounded-lg border border-divider-strong bg-surface px-3 text-[15px] text-ink placeholder:text-ink-muted',
         'transition-colors hover:border-accent/40 focus-visible:border-accent focus-visible:outline-none',
         'disabled:cursor-not-allowed disabled:bg-canvas disabled:opacity-70',
         className,
@@ -26,7 +26,7 @@ export const Textarea = React.forwardRef<
     ref={ref}
     rows={rows}
     className={cn(
-      'w-full resize-y rounded-lg border border-divider-strong bg-surface px-3 py-2 text-[15px] leading-relaxed text-ink placeholder:text-ink-muted/70',
+      'w-full resize-y rounded-lg border border-divider-strong bg-surface px-3 py-2 text-[15px] leading-relaxed text-ink placeholder:text-ink-muted',
       'transition-colors hover:border-accent/40 focus-visible:border-accent focus-visible:outline-none',
       className,
     )}

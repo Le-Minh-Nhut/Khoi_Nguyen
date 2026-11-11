@@ -6,6 +6,7 @@ import { glossaryCategories } from '@/content/glossaryCategories';
 import type { GlossaryCategoryId } from '@/types/content';
 import { termMatches } from '@/lib/search';
 import { useI18n } from '@/hooks/useApp';
+import { useSettings } from '@/app/SettingsProvider';
 import { cn } from '@/lib/cn';
 import { GlossaryResultRow } from './GlossaryResultRow';
 import { SearchField } from '@/components/shared/SearchField';
@@ -21,26 +22,54 @@ function isCategoryId(value: string | null): value is GlossaryCategoryId {
   return value !== null && categoryIds.includes(value as GlossaryCategoryId);
 }
 
+/**
+ * The URL is the single source of truth for the query and the category, so a
+ * shared link, the back button, and a later in-route navigation to
+ * `/glossary?q=…` all agree with what is on screen. The input keeps local state
+ * only so typing stays responsive; a debounce writes it back to the URL.
+ */
 export function GlossaryBrowser() {
   const t = useI18n();
   const [params, setParams] = useSearchParams();
-  const [query, setQuery] = useState(params.get('q') ?? '');
-  const [category, setCategory] = useState<GlossaryCategoryId | 'all'>(
-    isCategoryId(params.get('category')) ? (params.get('category') as GlossaryCategoryId) : 'all',
-  );
+
+  const urlQuery = params.get('q') ?? '';
+  const urlCategory = params.get('category');
+  const category: GlossaryCategoryId | 'all' = isCategoryId(urlCategory) ? urlCategory : 'all';
+
+  const [draft, setDraft] = useState(urlQuery);
   const [sort, setSort] = useState<SortMode>('category');
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const deferredQuery = useDeferredValue(query);
-
-  // Keep the URL shareable without re-rendering on every keystroke.
+  // Adopt an externally changed URL (back/forward, an in-app link) without
+  // fighting the user mid-keystroke: the debounce below writes the *trimmed*
+  // draft to the URL, so only step in when the URL says something the draft
+  // does not already mean.
   useEffect(() => {
-    const next = new URLSearchParams();
-    if (query.trim()) next.set('q', query.trim());
-    if (category !== 'all') next.set('category', category);
-    const search = next.toString();
-    setParams(search, { replace: true });
-  }, [query, category, setParams]);
+    setDraft((current) => (current.trim() === urlQuery ? current : urlQuery));
+  }, [urlQuery]);
+
+  useEffect(() => {
+    if (draft === urlQuery) return;
+    const timer = setTimeout(() => {
+      const next = new URLSearchParams(params);
+      if (draft.trim()) next.set('q', draft.trim());
+      else next.delete('q');
+      setParams(next, { replace: true });
+    }, 220);
+    return () => clearTimeout(timer);
+  }, [draft, urlQuery, params, setParams]);
+
+  const deferredQuery = useDeferredValue(urlQuery);
+
+  const setCategory = useCallback(
+    (next: GlossaryCategoryId | 'all', replace = true) => {
+      const search = new URLSearchParams(params);
+      if (next === 'all') search.delete('category');
+      else search.set('category', next);
+      setParams(search, { replace });
+    },
+    [params, setParams],
+  );
 
   const results = useMemo(() => {
     const filtered = glossaryTerms.filter(
@@ -65,11 +94,11 @@ export function GlossaryBrowser() {
   }, []);
 
   const clearAll = useCallback(() => {
-    setQuery('');
-    setCategory('all');
-  }, []);
+    setDraft('');
+    setCategory('all', false);
+  }, [setCategory]);
 
-  const activeFilterCount = (query.trim() ? 1 : 0) + (category !== 'all' ? 1 : 0);
+  const activeFilterCount = (urlQuery.trim() ? 1 : 0) + (category !== 'all' ? 1 : 0);
 
   const categoryList = (
     <CategoryList
@@ -95,8 +124,8 @@ export function GlossaryBrowser() {
       <div className="min-w-0">
         <div className="flex flex-col gap-3 border-b border-divider pb-4 sm:flex-row sm:items-center">
           <SearchField
-            value={query}
-            onChange={setQuery}
+            value={draft}
+            onChange={setDraft}
             placeholder={t('glossary.search')}
             label={t('glossary.search')}
             className="sm:max-w-md"
@@ -135,7 +164,7 @@ export function GlossaryBrowser() {
         <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
           <p className="text-[13px] text-ink-muted" role="status" aria-live="polite">
             <strong className="font-semibold tabular-nums text-ink">{results.length}</strong> {t('label.terms')}
-            {query.trim() ? ` · “${query.trim()}”` : ''}
+            {urlQuery.trim() ? ` · “${urlQuery.trim()}”` : ''}
           </p>
           {activeFilterCount > 0 ? (
             <button
@@ -150,7 +179,7 @@ export function GlossaryBrowser() {
         </div>
 
         {category !== 'all' ? (
-          <p className="mt-3 rounded-lg bg-accent-soft/70 px-3.5 py-2 text-[13px] leading-relaxed text-accent-strong">
+          <p className="mt-3 rounded-lg bg-accent-soft/70 px-3.5 py-2 text-[13px] leading-relaxed text-accent-strong" lang="vi">
             {glossaryCategories.find((item) => item.id === category)?.scope.vi}
           </p>
         ) : null}
@@ -202,6 +231,7 @@ function CategoryList({
   counts: Map<GlossaryCategoryId, number>;
 }) {
   const t = useI18n();
+  const { uiLang } = useSettings();
   return (
     <ul className="space-y-0.5">
       <li>
@@ -217,7 +247,7 @@ function CategoryList({
           )}
         >
           <span>{t('label.all')}</span>
-          <span className="text-[11px] tabular-nums text-ink-muted/70">{glossaryTerms.length}</span>
+          <span className="text-[11px] tabular-nums text-ink-muted">{glossaryTerms.length}</span>
         </button>
       </li>
       {glossaryCategories.map((category) => (
@@ -233,8 +263,8 @@ function CategoryList({
                 : 'text-ink-muted hover:bg-canvas hover:text-ink',
             )}
           >
-            <span>{category.label.vi}</span>
-            <span className="shrink-0 text-[11px] tabular-nums text-ink-muted/70">
+            <span lang={uiLang}>{category.label[uiLang]}</span>
+            <span className="shrink-0 text-[11px] tabular-nums text-ink-muted">
               {counts.get(category.id) ?? 0}
             </span>
           </button>

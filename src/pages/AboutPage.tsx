@@ -11,66 +11,22 @@ import { Button } from '@/components/ui/button';
 import { ImageCredit } from '@/components/shared/ImageCredit';
 import { imageCredits } from '@/content/imageCredits';
 import { imagePath } from '@/lib/imagePath';
+import type { UiKey } from '@/content/translations';
 
-const audience = [
-  {
-    vi: 'Sinh viên ngành biên–phiên dịch',
-    en: 'Translation and interpretation students',
-  },
-  {
-    vi: 'Phiên dịch viên mới vào nghề và trình độ trung cấp',
-    en: 'Beginner and intermediate interpreters',
-  },
-  {
-    vi: 'Sinh viên hỗ trợ các sự kiện giáo dục song ngữ',
-    en: 'Students supporting bilingual education events',
-  },
-  {
-    vi: 'Cán bộ hợp tác quốc tế của các trường đại học',
-    en: 'University international relations staff',
-  },
-  {
-    vi: 'Những người hỗ trợ giao tiếp quốc tế trong giáo dục',
-    en: 'Anyone assisting international educational communication',
-  },
+const audienceKeys: UiKey[] = [
+  'about.audience.1',
+  'about.audience.2',
+  'about.audience.3',
+  'about.audience.4',
+  'about.audience.5',
 ];
 
-const features = [
-  {
-    icon: BookOpen,
-    vi: 'Tra cứu thuật ngữ song ngữ theo tám nhóm chủ đề, tìm được không dấu, tìm theo từ viết tắt.',
-    en: 'Bilingual terminology across eight domains, searchable without diacritics and by abbreviation.',
-    to: '/glossary',
-    cta: 'Thuật ngữ',
-  },
-  {
-    icon: Compass,
-    vi: 'Ngân hàng 48 mẫu câu chuyên nghiệp, hiện/ẩn bản dịch, sao chép và lưu lại.',
-    en: 'A bank of 48 professional expressions with translation toggles, copy, and bookmarks.',
-    to: '/phrase-bank',
-    cta: 'Mẫu câu',
-  },
-  {
-    icon: Target,
-    vi: 'Tám chương hướng dẫn nghề phiên dịch, có ghi chú dịch thuật và bảng so sánh.',
-    en: 'Eight chapters on interpreting practice, with translation notes and comparison tables.',
-    to: '/guide',
-    cta: 'Hướng dẫn',
-  },
-  {
-    icon: Users,
-    vi: 'Sáu tình huống thực tế với hội thoại song ngữ đầy đủ và mẹo xử lý tại chỗ.',
-    en: 'Six realistic scenarios with full bilingual dialogue and on-the-spot tips.',
-    to: '/scenarios',
-    cta: 'Tình huống',
-  },
-  {
-    icon: ShieldCheck,
-    vi: 'Công cụ chuẩn bị: danh mục kiểm tra, bảng thuật ngữ xuất CSV, mẫu ghi chú.',
-    en: 'Preparation toolkit: checklists, an exportable glossary, and a note-taking template.',
-    to: '/toolkit',
-    cta: 'Công cụ',
-  },
+const featureKeys: Array<{ icon: typeof BookOpen; body: UiKey; to: string; cta: UiKey }> = [
+  { icon: BookOpen, body: 'about.feature.glossary', to: '/glossary', cta: 'nav.glossary' },
+  { icon: Compass, body: 'about.feature.phrases', to: '/phrase-bank', cta: 'nav.phrases' },
+  { icon: Target, body: 'about.feature.guide', to: '/guide', cta: 'nav.guide' },
+  { icon: Users, body: 'about.feature.scenarios', to: '/scenarios', cta: 'nav.scenarios' },
+  { icon: ShieldCheck, body: 'about.feature.toolkit', to: '/toolkit', cta: 'nav.toolkit' },
 ];
 
 export default function AboutPage() {
@@ -85,10 +41,10 @@ export default function AboutPage() {
         lede={t('about.lede')}
         meta={
           <>
-            <StatPill label="thuật ngữ" value={String(glossaryTerms.length)} />
-            <StatPill label="mẫu câu" value={String(phrases.length)} />
-            <StatPill label="chương" value={String(lessons.length)} />
-            <StatPill label="tình huống" value={String(scenarios.length)} />
+            <StatPill label={t('label.terms')} value={String(glossaryTerms.length)} />
+            <StatPill label={t('nav.phrases')} value={String(phrases.length)} />
+            <StatPill label={t('label.chapters')} value={String(lessons.length)} />
+            <StatPill label={t('nav.scenarios')} value={String(scenarios.length)} />
           </>
         }
       />
@@ -98,7 +54,7 @@ export default function AboutPage() {
           <figure className="mb-8 overflow-hidden rounded-panel border border-divider">
             <img
               src={imagePath('about-venue.webp')}
-              alt="Giảng đường đại học trong giờ giảng, sinh viên ngồi theo dãy bàn"
+              alt={t('about.venueAlt')}
               width={1100}
               height={619}
               loading="lazy"
@@ -106,60 +62,41 @@ export default function AboutPage() {
               className="aspect-video w-full object-cover"
             />
             <figcaption className="flex flex-wrap items-baseline justify-between gap-2 border-t border-divider bg-surface px-3.5 py-2">
-              <span className="text-[12px] text-ink-muted">
-                Giảng đường — nơi phần lớn công việc phiên dịch giáo dục thực sự diễn ra.
-              </span>
+              <span className="text-[12px] text-ink-muted">{t('about.venueCaption')}</span>
               <ImageCredit file="about-venue.webp" />
             </figcaption>
           </figure>
 
           <section aria-labelledby="background">
             <h2 id="background" className="text-h2 mb-3">
-              Bối cảnh dự án
+              {t('about.background')}
             </h2>
-            <p className="prose-guide">
-              Các sự kiện giáo dục quốc tế tại Việt Nam diễn ra liên tục: hội nghị học thuật, hội thảo, lễ ký
-              kết biên bản ghi nhớ, buổi tư vấn du học, chương trình trao đổi sinh viên. Người phiên dịch trong
-              những bối cảnh này không chỉ cần vốn từ, mà cần biết thuật ngữ nào là chuẩn mực, chức danh nào
-              phải đọc ra sao, và khi nào một cách dịch trôi chảy lại làm sai lệch ý.
-            </p>
-            <p className="prose-guide mt-3">
-              EduLingo Guide ra đời để lấp khoảng trống đó: một sổ tay tra cứu nhanh, có chú thích dịch thuật,
-              tổ chức theo đúng cách một phiên dịch viên chuẩn bị cho sự kiện — tra thuật ngữ, học kỹ thuật,
-              rồi luyện tập.
-            </p>
+            <p className="prose-guide">{t('about.background.p1')}</p>
+            <p className="prose-guide mt-3">{t('about.background.p2')}</p>
           </section>
 
           <section aria-labelledby="mission" className="mt-10">
             <h2 id="mission" className="text-h2 mb-3">
-              Sứ mệnh
+              {t('about.mission')}
             </h2>
-            <p className="prose-guide">
-              Giúp người làm công tác phiên dịch trong giáo dục có được cách diễn đạt chính xác và tự nhiên
-              bằng cả hai ngôn ngữ, để nội dung học thuật và các cam kết hợp tác không bị bóp méo qua bản dịch.
-            </p>
+            <p className="prose-guide">{t('about.mission.body')}</p>
           </section>
 
           <section aria-labelledby="vision" className="mt-10">
             <h2 id="vision" className="text-h2 mb-3">
-              Tầm nhìn
+              {t('about.vision')}
             </h2>
-            <p className="prose-guide">
-              Một nguồn tham khảo mở, miễn phí, được cập nhật, mà bất kỳ sinh viên hay cán bộ hợp tác quốc tế
-              nào cũng có thể dùng trước một sự kiện mà không cần khóa đào tạo dài hạn. Nội dung song ngữ, không
-              chỉ là danh sách từ.
-            </p>
+            <p className="prose-guide">{t('about.vision.body')}</p>
           </section>
 
           <section aria-labelledby="audience" className="mt-10">
             <h2 id="audience" className="text-h2 mb-3">
-              Đối tượng sử dụng
+              {t('about.audience')}
             </h2>
             <ul className="space-y-2">
-              {audience.map((item) => (
-                <li key={item.en} className="flex gap-3 border-b border-divider pb-2 text-[14.5px]">
-                  <span className="flex-1 text-ink">{item.vi}</span>
-                  <span className="hidden flex-1 text-[13px] text-ink-muted sm:block">{item.en}</span>
+              {audienceKeys.map((key) => (
+                <li key={key} className="flex gap-3 border-b border-divider pb-2 text-[14.5px]">
+                  <span className="flex-1 text-ink">{t(key)}</span>
                 </li>
               ))}
             </ul>
@@ -167,20 +104,19 @@ export default function AboutPage() {
 
           <section aria-labelledby="features" className="mt-10">
             <h2 id="features" className="text-h2 mb-3">
-              Chức năng của website
+              {t('about.features')}
             </h2>
             <ul className="space-y-3">
-              {features.map((feature) => {
+              {featureKeys.map((feature) => {
                 const Icon = feature.icon;
                 return (
                   <li key={feature.to} className="flex gap-3 rounded-lg border border-divider bg-surface p-4">
                     <Icon className="mt-0.5 size-4 shrink-0 text-accent" aria-hidden="true" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-[14px] leading-relaxed text-ink">{feature.vi}</p>
-                      <p className="mt-0.5 text-[12.5px] leading-relaxed text-ink-muted">{feature.en}</p>
+                      <p className="text-[14px] leading-relaxed text-ink">{t(feature.body)}</p>
                     </div>
                     <Button asChild variant="ghost" size="sm" className="self-center">
-                      <Link to={feature.to}>{feature.cta}</Link>
+                      <Link to={feature.to}>{t(feature.cta)}</Link>
                     </Button>
                   </li>
                 );
@@ -190,24 +126,24 @@ export default function AboutPage() {
 
           <section aria-labelledby="credits" className="mt-10">
             <h2 id="credits" className="text-h2 mb-2">
-              Nguồn ảnh
+              {t('about.credits')}
             </h2>
             <p className="mb-3 max-w-[62ch] text-[13px] leading-relaxed text-ink-muted">
-              Ảnh minh hoạ lấy từ Wikimedia Commons, giấy phép công khai (Public Domain, CC0, CC BY,
-              CC BY-SA), lưu trữ cục bộ và không tải từ máy chủ ngoài khi chạy. Mỗi ảnh đã được cắt và
-              nén lại cho trang web.
+              {t('about.credits.lede2')}
             </p>
             <ul className="divide-y divide-divider rounded-card border border-divider bg-surface">
               {imageCredits.map((credit) => (
-                <li key={credit.file} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-3.5 py-2.5">
-                  <span className="min-w-0 text-[12.5px] text-ink">
-                    {credit.author}
-                  </span>
+                <li
+                  key={credit.file}
+                  className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-3.5 py-2.5"
+                >
+                  <span className="min-w-0 text-[12.5px] text-ink">{credit.author}</span>
                   <a
                     href={credit.sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[12px] text-ink-muted underline-offset-2 hover:text-accent-strong hover:underline"
+                    title={credit.title}
                   >
                     {credit.license}
                   </a>
@@ -216,42 +152,37 @@ export default function AboutPage() {
             </ul>
           </section>
 
-          <section aria-labelledby="disclaimer" className="mt-10 rounded-card border border-highlight/70 bg-highlight-soft p-5">
+          <section
+            aria-labelledby="disclaimer"
+            className="mt-10 rounded-card border border-highlight/70 bg-highlight-soft p-5"
+          >
             <h2 id="disclaimer" className="text-h3 mb-2 text-[#4d370f]">
-              Tuyên bố miễn trừ
+              {t('about.disclaimer')}
             </h2>
             <p className="text-[13.5px] leading-relaxed text-[#5f4413]">{t('footer.disclaimer')}</p>
-            <p className="mt-2 text-[12.5px] leading-relaxed text-[#7a5a20]">
-              This project is not affiliated with, endorsed by, or sponsored by any university, ministry, or
-              professional body. Names of institutions in the practice material are illustrative.
-            </p>
+            <p className="mt-2 text-[12.5px] leading-relaxed text-[#5f4413]">{t('about.disclaimerEn')}</p>
           </section>
         </div>
 
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <div className="rounded-card border border-divider bg-canvas/60 p-4">
-            <h2 className="eyebrow mb-2">Nguyên tắc thiết kế</h2>
+            <h2 className="eyebrow mb-2">{t('about.principles')}</h2>
             <ul className="space-y-2 text-[13px] leading-relaxed text-ink-muted">
-              <li>Song ngữ ngay trên trang, không giấu bản dịch sau một tab.</li>
-              <li>Chú thích khi một cách dịch sát chữ sẽ gây hiểu sai.</li>
-              <li>Không tự động chấm điểm bản dịch mở — chỉ đưa bản gợi ý để đối chiếu.</li>
-              <li>Toàn bộ nội dung chạy trong trình duyệt; không có máy chủ, không thu thập dữ liệu.</li>
+              <li>{t('about.principles.1')}</li>
+              <li>{t('about.principles.2')}</li>
+              <li>{t('about.principles.3')}</li>
+              <li>{t('about.principles.4')}</li>
             </ul>
           </div>
 
           <div className="rounded-card border border-divider bg-surface p-4">
-            <h2 className="eyebrow mb-2">Công nghệ</h2>
-            <p className="text-[13px] leading-relaxed text-ink-muted">
-              React 19, TypeScript, Vite, Tailwind CSS v4, Radix UI, React Router, Lucide. Dữ liệu giáo dục
-              nằm trong các tệp TypeScript; tùy chọn và nội dung đã lưu dùng localStorage.
-            </p>
+            <h2 className="eyebrow mb-2">{t('about.tech')}</h2>
+            <p className="text-[13px] leading-relaxed text-ink-muted">{t('about.tech.body')}</p>
           </div>
 
           <div className="rounded-card border border-divider bg-accent-soft/60 p-4">
-            <h2 className="eyebrow mb-1">Bắt đầu</h2>
-            <p className="text-[13px] leading-relaxed text-ink-muted">
-              Đọc chương một, rồi mở một tình huống và ẩn bản dịch để tự thử.
-            </p>
+            <h2 className="eyebrow mb-1">{t('about.start')}</h2>
+            <p className="text-[13px] leading-relaxed text-ink-muted">{t('about.start.body')}</p>
             <Button asChild size="sm" className="mt-3">
               <Link to="/guide/types-of-interpreting">{t('guide.start')}</Link>
             </Button>

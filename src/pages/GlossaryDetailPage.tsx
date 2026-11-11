@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { glossaryTerms } from '@/content/glossary';
 import { glossaryCategories } from '@/content/glossaryCategories';
 import { useI18n } from '@/hooks/useApp';
+import { useSettings } from '@/app/SettingsProvider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { BookmarkButton, CopyButton } from '@/components/shared/Actions';
@@ -12,6 +13,7 @@ import NotFoundPage from './NotFoundPage';
 
 export default function GlossaryDetailPage() {
   const t = useI18n();
+  const { uiLang } = useSettings();
   const { slug } = useParams();
   const index = glossaryTerms.findIndex((item) => item.slug === slug);
 
@@ -43,7 +45,7 @@ export default function GlossaryDetailPage() {
       <Breadcrumbs
         items={[
           { label: t('nav.glossary'), to: '/glossary' },
-          ...(category ? [{ label: category.label.vi, to: `/glossary?category=${category.id}` }] : []),
+          ...(category ? [{ label: category.label[uiLang], to: `/glossary?category=${category.id}` }] : []),
           { label: term.en },
         ]}
       />
@@ -52,13 +54,18 @@ export default function GlossaryDetailPage() {
         <article className="min-w-0">
           <header className="border-b border-divider pb-6">
             <div className="flex flex-wrap items-center gap-2">
-              {category ? <Badge tone="accent">{category.label.vi}</Badge> : null}
+              {category ? <Badge tone="accent">{category.label[uiLang]}</Badge> : null}
               {term.abbreviation ? <Badge>{term.abbreviation}</Badge> : null}
             </div>
-            <h1 className="mt-3 text-[1.9rem] font-semibold leading-tight tracking-[-0.02em] sm:text-[2.35rem]">
+            <h1
+              lang="en"
+              className="mt-3 text-[1.9rem] font-semibold leading-tight tracking-[-0.02em] sm:text-[2.35rem]"
+            >
               {term.en}
             </h1>
-            <p className="mt-1.5 font-serif text-[1.3rem] text-accent-strong">{term.vi}</p>
+            <p className="mt-1.5 font-serif text-[1.3rem] text-accent-strong" lang="vi">
+              {term.vi}
+            </p>
             <div className="mt-5 flex flex-wrap items-center gap-2">
               <BookmarkButton kind="glossary" id={term.slug} withLabel />
               <CopyButton text={copyPayload} label={t('action.copy')} />
@@ -69,8 +76,12 @@ export default function GlossaryDetailPage() {
             <h2 id="definition-heading" className="eyebrow mb-2">
               {t('label.definition')}
             </h2>
-            <p className="prose-guide text-[15.5px]">{term.definitionVi}</p>
-            <p className="mt-2 max-w-[70ch] text-[14px] leading-relaxed text-ink-muted">{term.definitionEn}</p>
+            <p className="prose-guide text-[15.5px]" lang="vi">
+              {term.definitionVi}
+            </p>
+            <p className="mt-2 max-w-[70ch] text-[14px] leading-relaxed text-ink-muted" lang="en">
+              {term.definitionEn}
+            </p>
           </section>
 
           <section aria-labelledby="example-heading" className="mt-8">
@@ -87,7 +98,9 @@ export default function GlossaryDetailPage() {
               </h2>
               <TranslationNote title={t('label.note')}>
                 <p>{term.note.vi}</p>
-                <p className="mt-2 border-t border-highlight/50 pt-2 text-[12.5px] text-[#7a5a20]">{term.note.en}</p>
+                <p className="mt-2 border-t border-highlight/50 pt-2 text-[12.5px] text-[#7a5a20]" lang="en">
+                  {term.note.en}
+                </p>
               </TranslationNote>
             </section>
           ) : null}
@@ -106,10 +119,12 @@ export default function GlossaryDetailPage() {
                     >
                       <span className="min-w-0">
                         <span className="block truncate text-[14px] font-medium text-ink">{item.en}</span>
-                        <span className="block truncate text-[12.5px] text-ink-muted">{item.vi}</span>
+                        <span className="block truncate text-[12.5px] text-ink-muted" lang="vi">
+                          {item.vi}
+                        </span>
                       </span>
                       <ArrowRight
-                        className="size-3.5 shrink-0 text-ink-muted/50 transition-colors group-hover:text-accent"
+                        className="size-3.5 shrink-0 text-ink-muted transition-colors group-hover:text-accent"
                         aria-hidden="true"
                       />
                     </Link>

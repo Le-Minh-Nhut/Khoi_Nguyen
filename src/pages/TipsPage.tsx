@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { AlertTriangle, ArrowRight, CheckCircle2, Info, Lightbulb } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { tips } from '@/content/tips';
 import { useI18n } from '@/hooks/useApp';
 import { PageHeader } from '@/components/shared/PageHeader';
@@ -10,9 +11,27 @@ import { Button } from '@/components/ui/button';
 
 export default function TipsPage() {
   const t = useI18n();
-  const [activeId, setActiveId] = useState<string>(tips[0]?.id ?? '');
+  const [params, setParams] = useSearchParams();
 
-  const active = useMemo(() => tips.find((tip) => tip.id === activeId) ?? tips[0], [activeId]);
+  // The URL is the source of truth for the open tip, so a bookmark in /saved can
+  // deep-link back to the exact tip and browser back/forward keeps working.
+  const requested = params.get('tip');
+  const active = useMemo(
+    () => tips.find((tip) => tip.id === requested) ?? tips[0],
+    [requested],
+  );
+
+  useEffect(() => {
+    // A stale or hand-edited ?tip= value is corrected to what is on screen.
+    if (!active) return;
+    if (requested === active.id) return;
+    setParams(active.id === tips[0]?.id ? {} : { tip: active.id }, { replace: true });
+  }, [active, requested, setParams]);
+
+  const show = useCallback(
+    (id: string) => setParams({ tip: id }, { replace: true }),
+    [setParams],
+  );
 
   if (!active) return null;
 
@@ -28,7 +47,7 @@ export default function TipsPage() {
               <li key={tip.id}>
                 <button
                   type="button"
-                  onClick={() => setActiveId(tip.id)}
+                  onClick={() => show(tip.id)}
                   aria-current={tip.id === active.id ? 'true' : undefined}
                   className={cn(
                     'flex w-full gap-2 rounded-md px-2.5 py-2 text-left text-[13px] leading-snug transition-colors',
@@ -37,7 +56,7 @@ export default function TipsPage() {
                       : 'text-ink-muted hover:bg-canvas hover:text-ink',
                   )}
                 >
-                  <span className="tabular-nums text-[11px] text-ink-muted/70">
+                  <span className="tabular-nums text-[11px] text-ink-muted">
                     {String(tip.number).padStart(2, '0')}
                   </span>
                   <span className="min-w-0">{tip.title.vi}</span>
@@ -55,7 +74,7 @@ export default function TipsPage() {
             <h2 className="text-h2 font-serif">{active.title.vi}</h2>
             <p className="mt-0.5 text-[14px] text-ink-muted">{active.title.en}</p>
             <div className="mt-3">
-              <BookmarkButton kind="lessons" id={`tip:${active.id}`} withLabel size="sm" />
+              <BookmarkButton kind="tips" id={active.id} withLabel size="sm" />
             </div>
           </header>
 
@@ -64,14 +83,18 @@ export default function TipsPage() {
               <AlertTriangle className="size-3.5" aria-hidden="true" />
               {t('label.problem')}
             </h3>
-            <p className="prose-guide">{active.problem.vi}</p>
+            <p className="prose-guide" lang="vi">
+              {active.problem.vi}
+            </p>
           </section>
 
           <section className="mt-6">
             <h3 className="eyebrow mb-2">{t('label.example')}</h3>
             <div className="rounded-card border border-error/20 bg-error-soft/50 p-4">
-              <p className="text-[14px] leading-relaxed text-[#7a1f17]">{active.example.vi}</p>
-              <p className="mt-2 border-t border-error/15 pt-2 text-[12.5px] leading-relaxed text-[#8c3a32]">
+              <p className="text-[14px] leading-relaxed text-[#7a1f17]" lang="vi">
+                {active.example.vi}
+              </p>
+              <p className="mt-2 border-t border-error/15 pt-2 text-[12.5px] leading-relaxed text-[#8c3a32]" lang="en">
                 {active.example.en}
               </p>
             </div>
@@ -83,8 +106,10 @@ export default function TipsPage() {
               {t('label.better')}
             </h3>
             <div className="rounded-card border border-success/25 bg-success-soft/70 p-4">
-              <p className="font-serif text-[1rem] leading-relaxed text-[#154c34]">{active.better.vi}</p>
-              <p className="mt-2 border-t border-success/20 pt-2 text-[12.5px] leading-relaxed text-[#2b6047]">
+              <p className="font-serif text-[1rem] leading-relaxed text-[#154c34]" lang="vi">
+                {active.better.vi}
+              </p>
+              <p className="mt-2 border-t border-success/20 pt-2 text-[12.5px] leading-relaxed text-[#2b6047]" lang="en">
                 {active.better.en}
               </p>
             </div>
@@ -95,8 +120,12 @@ export default function TipsPage() {
               <Info className="size-3.5" aria-hidden="true" />
               {t('label.why')}
             </h3>
-            <p className="prose-guide">{active.explanation.vi}</p>
-            <p className="mt-1.5 max-w-[70ch] text-[13px] leading-relaxed text-ink-muted">{active.explanation.en}</p>
+            <p className="prose-guide" lang="vi">
+              {active.explanation.vi}
+            </p>
+            <p className="mt-1.5 max-w-[70ch] text-[13px] leading-relaxed text-ink-muted" lang="en">
+              {active.explanation.en}
+            </p>
           </section>
 
           <section className="mt-6">
@@ -108,7 +137,7 @@ export default function TipsPage() {
               {active.advice.map((advice) => (
                 <li key={advice.en} className="flex gap-2.5 text-[14.5px] leading-relaxed text-ink">
                   <span aria-hidden="true" className="mt-2.5 h-px w-2.5 shrink-0 bg-accent" />
-                  <span>{advice.vi}</span>
+                  <span lang="vi">{advice.vi}</span>
                 </li>
               ))}
             </ul>
@@ -120,13 +149,13 @@ export default function TipsPage() {
               <ul className="flex flex-wrap gap-2">
                 {active.relatedTerms.map((term) => (
                   <li key={term}>
-                    <a
-                      href={`/glossary/${term}`}
+                    <Link
+                      to={`/glossary/${term}`}
                       className="inline-flex items-center gap-1 rounded-md border border-divider bg-surface px-2.5 py-1 text-[13px] text-accent-strong transition-colors hover:border-accent/40 hover:bg-accent-soft/60"
                     >
                       {term.replace(/-/g, ' ')}
                       <ArrowRight className="size-3" aria-hidden="true" />
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -140,7 +169,7 @@ export default function TipsPage() {
               disabled={active.number === 1}
               onClick={() => {
                 const prev = tips.find((tip) => tip.number === active.number - 1);
-                if (prev) setActiveId(prev.id);
+                if (prev) show(prev.id);
               }}
             >
               {t('action.previous')}
@@ -153,7 +182,7 @@ export default function TipsPage() {
               disabled={active.number === tips.length}
               onClick={() => {
                 const nxt = tips.find((tip) => tip.number === active.number + 1);
-                if (nxt) setActiveId(nxt.id);
+                if (nxt) show(nxt.id);
               }}
             >
               {t('action.next')}

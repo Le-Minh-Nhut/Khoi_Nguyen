@@ -1,9 +1,15 @@
 import { createContext, useCallback, useContext, useMemo, type ReactNode } from 'react';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { storageKeys } from '@/lib/storage';
-import type { AppSettings, BookmarkKind, BookmarkState } from '@/types/storage';
+import {
+  EMPTY_BOOKMARKS,
+  countBookmarks,
+  normalizeBookmarks,
+  normalizeSettings,
+} from '@/lib/storageSchema';
+import type { BookmarkKind, BookmarkState } from '@/types/storage';
 
-const DEFAULT_SETTINGS: AppSettings = { uiLang: 'vi', showTranslations: true };
+const DEFAULT_SETTINGS = { uiLang: 'vi' as const, showTranslations: true };
 
 interface SettingsContextValue {
   uiLang: 'vi' | 'en';
@@ -16,11 +22,16 @@ interface SettingsContextValue {
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  const [settings, setSettings] = useLocalStorage<AppSettings>(storageKeys.settings, DEFAULT_SETTINGS);
+  // `normalizeSettings` guarantees the shape, so a null/number/partial value
+  // from an older build or a manual edit cannot crash the first render.
+  const [settings, setSettings] = useLocalStorage(
+    storageKeys.settings,
+    DEFAULT_SETTINGS,
+    normalizeSettings,
+  );
 
-  // Missing/legacy keys merge onto defaults instead of breaking the UI.
-  const uiLang = settings.uiLang === 'en' ? 'en' : 'vi';
-  const showTranslations = settings.showTranslations !== false;
+  const uiLang = settings.uiLang;
+  const showTranslations = settings.showTranslations;
 
   const setUiLang = useCallback(
     (lang: 'vi' | 'en') => setSettings((current) => ({ ...current, uiLang: lang })),
@@ -53,8 +64,6 @@ export function useSettings(): SettingsContextValue {
 
 /* --------------------------------- Bookmarks -------------------------------- */
 
-const EMPTY_BOOKMARKS: BookmarkState = { glossary: [], phrases: [], lessons: [], scenarios: [] };
-
 interface BookmarksContextValue {
   bookmarks: BookmarkState;
   isSaved: (kind: BookmarkKind, id: string) => boolean;
@@ -65,18 +74,13 @@ interface BookmarksContextValue {
 
 const BookmarksContext = createContext<BookmarksContextValue | null>(null);
 
-function normalizeBookmarks(raw: BookmarkState): BookmarkState {
-  return {
-    glossary: Array.isArray(raw?.glossary) ? raw.glossary : [],
-    phrases: Array.isArray(raw?.phrases) ? raw.phrases : [],
-    lessons: Array.isArray(raw?.lessons) ? raw.lessons : [],
-    scenarios: Array.isArray(raw?.scenarios) ? raw.scenarios : [],
-  };
-}
-
 export function BookmarksProvider({ children }: { children: ReactNode }) {
-  const [stored, setStored] = useLocalStorage<BookmarkState>(storageKeys.bookmarks, EMPTY_BOOKMARKS);
-  const bookmarks = useMemo(() => normalizeBookmarks(stored), [stored]);
+  const [stored, setStored] = useLocalStorage(
+    storageKeys.bookmarks,
+    EMPTY_BOOKMARKS,
+    normalizeBookmarks,
+  );
+  const bookmarks = stored;
 
   const isSaved = useCallback(
     (kind: BookmarkKind, id: string) => bookmarks[kind].includes(id),
@@ -85,6 +89,8 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
 
   const toggle = useCallback(
     (kind: BookmarkKind, id: string) => {
+      // Decide from the caller's view, then act on the freshest value inside the
+      // updater so rapid toggles on different items cannot clobber each other.
       const willSave = !bookmarks[kind].includes(id);
       setStored((current) => {
         const safe = normalizeBookmarks(current);
@@ -109,11 +115,7 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
     [setStored],
   );
 
-  const count =
-    bookmarks.glossary.length +
-    bookmarks.phrases.length +
-    bookmarks.lessons.length +
-    bookmarks.scenarios.length;
+  const count = countBookmarks(bookmarks);
 
   const value = useMemo<BookmarksContextValue>(
     () => ({ bookmarks, isSaved, toggle, remove, count }),

@@ -68,11 +68,26 @@ export async function copyText(text: string): Promise<boolean> {
   }
 }
 
-/** Escape a CSV cell per RFC 4180. */
+/**
+ * Escape a CSV cell per RFC 4180, and neutralise spreadsheet formulas.
+ *
+ * Excel, LibreOffice, and Google Sheets evaluate a cell that starts with
+ * `= + - @` (optionally after whitespace or a tab) as a formula, so user-typed
+ * glossary rows could execute on open. Prefixing with a single quote keeps the
+ * text readable and inert.
+ */
 export function escapeCsvCell(value: string): string {
-  const needsQuotes = /[",\r\n]/.test(value);
-  const escaped = value.replace(/"/g, '""');
+  const formulaLead = /^[\s\t\r]*[=+\-@]/;
+  const neutralised = formulaLead.test(value) ? `'${value}` : value;
+  const needsQuotes = /[",\r\n]/.test(neutralised);
+  const escaped = neutralised.replace(/"/g, '""');
   return needsQuotes ? `"${escaped}"` : escaped;
+}
+
+/** Word count for a draft, treating whitespace-only input as zero words. */
+export function countWords(input: string): number {
+  const trimmed = input.trim();
+  return trimmed === '' ? 0 : trimmed.split(/\s+/u).length;
 }
 
 export function toCsv(rows: string[][]): string {

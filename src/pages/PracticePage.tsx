@@ -5,7 +5,8 @@ import type { Quiz, TranslationExercise } from '@/types/content';
 import type { QuizScore as StoredQuizScore } from '@/types/storage';
 import { useI18n } from '@/hooks/useApp';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { storageKeys } from '@/lib/storage';
+import { normalizeDrafts, normalizeQuizScores } from '@/lib/storageSchema';
+import { countWords, storageKeys } from '@/lib/storage';
 import { cn } from '@/lib/cn';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
@@ -65,7 +66,7 @@ export default function PracticePage() {
 
 function QuizCard({ quiz }: { quiz: Quiz }) {
   const t = useI18n();
-  const [scores, setScores] = useLocalStorage<Scores>(storageKeys.quizScores, {});
+  const [scores, setScores] = useLocalStorage<Scores>(storageKeys.quizScores, {}, normalizeQuizScores);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -76,22 +77,20 @@ function QuizCard({ quiz }: { quiz: Quiz }) {
   const submit = () => {
     if (!allAnswered) return;
     setSubmitted(true);
-    const previous = scores[quiz.id];
-    if (!previous || correctCount > previous.best) {
-      setScores((current) => ({
+    // Compute inside the updater so two quizzes answering in the same tick
+    // compose instead of overwriting each other's score.
+    setScores((current) => {
+      const previous = current[quiz.id];
+      const best = previous ? Math.max(previous.best, correctCount) : correctCount;
+      return {
         ...current,
         [quiz.id]: {
-          best: correctCount,
+          best,
           total: quiz.questions.length,
           attempts: (previous?.attempts ?? 0) + 1,
         },
-      }));
-    } else {
-      setScores((current) => ({
-        ...current,
-        [quiz.id]: { ...previous, attempts: previous.attempts + 1 },
-      }));
-    }
+      };
+    });
   };
 
   const retry = () => {
@@ -161,7 +160,7 @@ function QuizCard({ quiz }: { quiz: Quiz }) {
                         />
                         <span className="flex-1">
                           {option.vi}
-                          <span className="mt-0.5 block text-[11.5px] text-ink-muted/90">{option.en}</span>
+                          <span className="mt-0.5 block text-[11.5px] text-ink-muted">{option.en}</span>
                         </span>
                         {submitted && isCorrect ? (
                           <Check className="mt-0.5 size-3.5 shrink-0 text-success" aria-hidden="true" />
@@ -240,6 +239,7 @@ function ExerciseWorkspace({ exercises }: { exercises: TranslationExercise[] }) 
   const [drafts, setDrafts] = useLocalStorage<Record<string, string>>(
     `${storageKeys.noteTemplate}:drafts`,
     {},
+    normalizeDrafts,
   );
 
   const exercise = exercises[index];
@@ -323,7 +323,7 @@ function ExerciseWorkspace({ exercises }: { exercises: TranslationExercise[] }) 
             aria-expanded={revealed}
             aria-controls="exercise-suggested"
           >
-            {revealed ? <Eye className="size-3.5" aria-hidden="true" /> : <Eye className="size-3.5" aria-hidden="true" />}
+            <Eye className="size-3.5" aria-hidden="true" />
             {revealed ? t('practice.hideAnswer') : t('practice.reveal')}
           </Button>
           <CopyButton
@@ -332,9 +332,10 @@ function ExerciseWorkspace({ exercises }: { exercises: TranslationExercise[] }) 
             text={`${exercise.source}\n\n${exercise.suggested}`}
             label="Sao chép cả hai"
           />
-          {(drafts[exercise.id] ?? '').length > 0 ? (
+          {countWords(drafts[exercise.id] ?? '') > 0 ? (
             <span className="text-[11.5px] text-ink-muted">
-              {drafts[exercise.id].trim().split(/\s+/).length} từ
+              {countWords(drafts[exercise.id] ?? '')}{' '}
+              {t('practice.words')}
             </span>
           ) : null}
         </div>

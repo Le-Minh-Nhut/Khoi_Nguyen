@@ -1,6 +1,10 @@
 import { test } from '@playwright/test';
 import { mkdirSync } from 'node:fs';
 
+/**
+ * Visual capture only — it produces files rather than assertions, so it runs once
+ * (see `testMatch` for the desktop project) instead of on every viewport project.
+ */
 const PAGES: Array<{ path: string; name: string }> = [
   { path: '/', name: 'home' },
   { path: '/glossary', name: 'glossary' },

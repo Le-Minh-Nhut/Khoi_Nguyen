@@ -56,8 +56,12 @@
     text-rendering: optimizeLegibility;
   }
 
+  /* Vietnamese words are broken at syllable boundaries by the browser's own
+     line breaking. A global `word-break: break-word` made the browser split
+     long words anywhere, which reads as damaged text; long unbreakable tokens
+     (URLs, IDs) are handled where they occur via `overflow-wrap: anywhere`. */
   :lang(vi) {
-    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   h1,

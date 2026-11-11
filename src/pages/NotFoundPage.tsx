@@ -9,7 +9,7 @@ export default function NotFoundPage() {
   return (
     <div className="container-page flex min-h-[60vh] items-center py-16">
       <div className="w-full max-w-2xl">
-        <p className="font-serif text-[5rem] font-semibold leading-none text-divider-strong/70 sm:text-[6rem]">404</p>
+        <p className="font-serif text-[5rem] font-semibold leading-none text-ink-muted sm:text-[6rem]">404</p>
         <h1 className="mt-2 text-h1">{t('notFound.title')}</h1>
         <p className="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-ink-muted">{t('notFound.lede')}</p>
         <div className="mt-7 flex flex-wrap gap-2.5">

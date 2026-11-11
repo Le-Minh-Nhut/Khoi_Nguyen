@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Eye, EyeOff, Languages } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { phrases } from '@/content/phrases';
 import { phraseCategories } from '@/content/phraseCategories';
 import type { Phrase, PhraseCategoryId } from '@/types/content';
@@ -18,10 +19,26 @@ type DisplayMode = 'both' | 'en' | 'vi';
 
 export default function PhraseBankPage() {
   const t = useI18n();
+  const [params, setParams] = useSearchParams();
   const [category, setCategory] = useState<PhraseCategoryId | 'all'>('all');
   const [query, setQuery] = useState('');
   const [mode, setMode] = useState<DisplayMode>('both');
   const [hidden, setHidden] = useState<Set<string>>(new Set());
+
+  // `/phrase-bank?phrase=<id>` (the link /saved uses) scrolls to and highlights
+  // one expression. The param is consumed once, then dropped so a reload does
+  // not re-scroll a page the reader has already moved on from.
+  const targetPhrase = params.get('phrase');
+  useEffect(() => {
+    if (!targetPhrase) return;
+    const exists = phrases.some((phrase) => phrase.id === targetPhrase);
+    if (exists) {
+      const element = document.getElementById(targetPhrase);
+      element?.scrollIntoView({ block: 'center' });
+      element?.focus?.();
+    }
+    setParams({}, { replace: true });
+  }, [targetPhrase, setParams]);
 
   const results = useMemo(
     () =>
@@ -43,6 +60,12 @@ export default function PhraseBankPage() {
   const allHidden = results.length > 0 && results.every((phrase) => hidden.has(phrase.id));
   const toggleAll = () => {
     setHidden(allHidden ? new Set() : new Set(results.map((phrase) => phrase.id)));
+  };
+  // Leaving `both` mode drops the hidden set: otherwise switching to `vi` would
+  // keep every card blank even though the toggle is no longer offered.
+  const selectMode = (next: DisplayMode) => {
+    setMode(next);
+    if (next !== 'both') setHidden(new Set());
   };
 
   const grouped = useMemo(() => {
@@ -88,15 +111,15 @@ export default function PhraseBankPage() {
             >
               {(
                 [
-                  ['both', 'Cả hai', Languages],
-                  ['en', 'EN', Eye],
-                  ['vi', 'VI', EyeOff],
+                  ['both', t('phrases.display.both'), Languages],
+                  ['en', t('phrases.display.en'), Eye],
+                  ['vi', t('phrases.display.vi'), EyeOff],
                 ] as const
               ).map(([value, label, Icon]) => (
                 <button
                   key={value}
                   type="button"
-                  onClick={() => setMode(value)}
+                  onClick={() => selectMode(value)}
                   aria-pressed={mode === value}
                   className={cn(
                     'inline-flex items-center gap-1 rounded-[6px] px-2.5 py-1.5 text-[12.5px] font-medium transition-colors',
@@ -109,9 +132,11 @@ export default function PhraseBankPage() {
               ))}
             </div>
 
-            <Button variant="secondary" size="sm" onClick={toggleAll}>
-              {allHidden ? t('action.showAll') : t('action.hideAll')}
-            </Button>
+            {mode === 'both' ? (
+              <Button variant="secondary" size="sm" onClick={toggleAll}>
+                {allHidden ? t('action.showAll') : t('action.hideAll')}
+              </Button>
+            ) : null}
           </div>
         </div>
 
@@ -218,20 +243,29 @@ function PhraseCard({
   onToggleTranslation: () => void;
 }) {
   const t = useI18n();
+  // In `vi` mode the Vietnamese line IS the content, so the translation toggle
+  // must never hide it; the toggle only exists in `both` mode.
   const showEn = mode !== 'vi';
-  const showVi = mode !== 'en' && !translationHidden;
+  const showVi = mode === 'vi' || (mode === 'both' && !translationHidden);
+  const toggleable = mode === 'both';
 
-  const copyText = mode === 'en' ? phrase.en : mode === 'vi' ? phrase.vi : `${phrase.en}\n${phrase.vi}`;
+  const copyValue = mode === 'en' ? phrase.en : mode === 'vi' ? phrase.vi : `${phrase.en}\n${phrase.vi}`;
 
   return (
-    <li id={phrase.id} className="group rounded-card border border-divider bg-surface p-4 sm:p-5">
+    <li
+      id={phrase.id}
+      tabIndex={-1}
+      className="group scroll-mt-28 rounded-card border border-divider bg-surface p-4 outline-none sm:p-5 focus-visible:ring-2 focus-visible:ring-accent"
+    >
       <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
         {showEn ? (
           <div className={cn(!showVi && 'sm:col-span-2')}>
-            <p className="mb-1 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-muted/80">
+            <p className="mb-1 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-muted">
               {t('label.english')}
             </p>
-            <p className="font-serif text-[1.02rem] leading-relaxed text-ink">{phrase.en}</p>
+            <p className="font-serif text-[1.02rem] leading-relaxed text-ink" lang="en">
+              {phrase.en}
+            </p>
           </div>
         ) : null}
 
@@ -242,14 +276,16 @@ function PhraseCard({
               !showEn && 'sm:col-span-2 sm:border-l-0 sm:pl-0',
             )}
           >
-            <p className="mb-1 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-accent-strong/80">
+            <p className="mb-1 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-accent-strong">
               {t('label.vietnamese')}
             </p>
-            <p className="text-[1.02rem] leading-relaxed text-ink">{phrase.vi}</p>
+            <p className="text-[1.02rem] leading-relaxed text-ink" lang="vi">
+              {phrase.vi}
+            </p>
           </div>
         ) : null}
 
-        {!showVi && mode === 'both' ? (
+        {!showVi && toggleable ? (
           <div className="flex items-center border-t border-dashed border-divider pt-3 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
             <button
               type="button"
@@ -265,7 +301,7 @@ function PhraseCard({
       <div className="mt-4 border-t border-divider pt-3">
         <p className="text-[12.5px] leading-relaxed text-ink-muted">
           <span className="font-medium text-ink">{t('label.context')}: </span>
-          {phrase.context.vi}
+          <span lang="vi">{phrase.context.vi}</span>
         </p>
 
         {phrase.note && showVi ? (
@@ -276,9 +312,9 @@ function PhraseCard({
         ) : null}
 
         <div className="mt-3 flex flex-wrap items-center gap-1.5">
-          <CopyButton size="sm" variant="ghost" text={copyText} />
+          <CopyButton size="sm" variant="ghost" text={copyValue} />
           <BookmarkButton kind="phrases" id={phrase.id} withLabel size="sm" />
-          {mode === 'both' ? (
+          {toggleable ? (
             <Button variant="ghost" size="sm" onClick={onToggleTranslation} className="text-ink-muted">
               {translationHidden ? t('action.showTranslation') : t('action.hideTranslation')}
             </Button>

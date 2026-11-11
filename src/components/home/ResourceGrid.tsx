@@ -8,6 +8,7 @@ import {
   Target,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useSettings } from '@/app/SettingsProvider';
 
 const resources = [
   {
@@ -61,10 +62,16 @@ const resources = [
 ];
 
 export function ResourceGrid() {
+  // Card copy is chrome, so it follows the interface language; the other
+  // language stays on screen as the secondary line, as everywhere else.
+  const { uiLang } = useSettings();
+  const other = uiLang === 'vi' ? 'en' : 'vi';
+
   return (
     <ul className="grid gap-px overflow-hidden rounded-card border border-divider bg-divider sm:grid-cols-2 lg:grid-cols-3">
       {resources.map((resource) => {
         const Icon = resource.icon;
+        const body = uiLang === 'vi' ? resource.bodyVi : resource.bodyEn;
         return (
           <li key={resource.to} className="bg-surface">
             <Link
@@ -74,13 +81,19 @@ export function ResourceGrid() {
               <div className="flex items-center justify-between">
                 <Icon className="size-5 text-accent" aria-hidden="true" />
                 <ArrowRight
-                  className="size-4 text-ink-muted/50 transition-transform group-hover:translate-x-0.5 group-hover:text-accent"
+                  className="size-4 text-ink-muted transition-transform group-hover:translate-x-0.5 group-hover:text-accent"
                   aria-hidden="true"
                 />
               </div>
-              <h3 className="mt-3 text-[15px] font-semibold text-ink">{resource.vi}</h3>
-              <p className="text-[12px] uppercase tracking-wide text-ink-muted">{resource.en}</p>
-              <p className="mt-2 flex-1 text-[13.5px] leading-relaxed text-ink-muted">{resource.bodyVi}</p>
+              <h3 className="mt-3 text-[15px] font-semibold text-ink" lang={uiLang}>
+                {resource[uiLang]}
+              </h3>
+              <p className="text-[12px] uppercase tracking-wide text-ink-muted" lang={other}>
+                {resource[other]}
+              </p>
+              <p className="mt-2 flex-1 text-[13.5px] leading-relaxed text-ink-muted" lang={uiLang}>
+                {body}
+              </p>
             </Link>
           </li>
         );
@@ -88,4 +101,3 @@ export function ResourceGrid() {
     </ul>
   );
 }
-

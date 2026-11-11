@@ -20,8 +20,8 @@ export default function GuidePage() {
         lede={t('guide.lede')}
         meta={
           <>
-            <StatPill label="chương" value={String(lessons.length)} />
-            <StatPill label="phút đọc" value={String(totalMinutes)} />
+            <StatPill label={t('label.chapters')} value={String(lessons.length)} />
+            <StatPill label={t('label.readingTime')} value={String(totalMinutes)} />
           </>
         }
         actions={
@@ -41,22 +41,30 @@ export default function GuidePage() {
               to={`/guide/${lesson.slug}`}
               className="group grid gap-3 py-6 transition-colors hover:bg-canvas/60 md:grid-cols-[4rem_minmax(0,1fr)_auto] md:items-start md:gap-6"
             >
-              <span className="font-serif text-3xl font-semibold leading-none tabular-nums text-divider-strong transition-colors group-hover:text-accent/60">
+              <span className="font-serif text-3xl font-semibold leading-none tabular-nums text-ink-muted transition-colors group-hover:text-accent/60">
                 {String(lesson.number).padStart(2, '0')}
               </span>
               <div className="min-w-0">
                 <h2 className="text-h3 font-serif text-ink transition-colors group-hover:text-accent-strong">
                   {lesson.title.vi}
                 </h2>
-                <p className="text-[13px] text-ink-muted">{lesson.title.en}</p>
-                <p className="mt-2 max-w-[64ch] text-[14px] leading-relaxed text-ink-muted">{lesson.summary.vi}</p>
+                <p className="text-[13px] text-ink-muted" lang="en">
+                  {lesson.title.en}
+                </p>
+                <p className="mt-2 max-w-[64ch] text-[14px] leading-relaxed text-ink-muted" lang="vi">
+                  {lesson.summary.vi}
+                </p>
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   <Badge>{lesson.readingMinutes} {t('label.readingTime')}</Badge>
-                  <Badge>{lesson.sections.length} mục</Badge>
-                  <Badge>{lesson.objectives.length} mục tiêu</Badge>
+                  <Badge>
+                    {lesson.sections.length} {t('label.sections')}
+                  </Badge>
+                  <Badge>
+                    {lesson.objectives.length} {t('label.objectivesShort')}
+                  </Badge>
                 </div>
               </div>
-              <span className="hidden self-center text-ink-muted/50 transition-colors group-hover:text-accent md:block">
+              <span className="hidden self-center text-ink-muted transition-colors group-hover:text-accent md:block">
                 <ArrowRight className="size-5" aria-hidden="true" />
               </span>
             </Link>
