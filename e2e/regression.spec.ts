@@ -423,6 +423,16 @@ test.describe('F-12 bilingual language metadata', () => {
     await expect(page.locator('p[lang="en"]').first()).toBeVisible();
   });
 
+  test('every glossary result row marks both languages', async ({ page }) => {
+    await page.goto('/glossary/', { waitUntil: 'networkidle' });
+    // The list is the densest bilingual surface in the app; a regression here
+    // silently removes language metadata from 96 rows.
+    await expect(page.locator('main ol > li span[lang="en"]').first()).toBeVisible();
+    await expect(page.locator('main ol > li p[lang="vi"]').first()).toBeVisible();
+    const tagged = await page.locator('main ol > li [lang]').count();
+    expect(tagged).toBeGreaterThanOrEqual(96);
+  });
+
   test('scenario dialogue marks both languages', async ({ page }) => {
     await page.goto('/scenarios/university-partnership-meeting', { waitUntil: 'networkidle' });
     await expect(page.locator('section:has(#dialogue-heading) p[lang="en"]').first()).toBeVisible();

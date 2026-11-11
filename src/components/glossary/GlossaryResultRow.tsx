@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import type { GlossaryTerm } from '@/types/content';
 import { glossaryCategories } from '@/content/glossaryCategories';
 import { BookmarkButton } from '@/components/shared/Actions';
+import { useSettings } from '@/app/SettingsProvider';
 
 function Highlight({ text, query }: { text: string; query: string }) {
   const trimmed = query.trim();
@@ -28,6 +29,7 @@ interface GlossaryResultRowProps {
 }
 
 export function GlossaryResultRow({ term, query, showCategory = true }: GlossaryResultRowProps) {
+  const { uiLang } = useSettings();
   const category = glossaryCategories.find((item) => item.id === term.category);
 
   return (
@@ -37,7 +39,7 @@ export function GlossaryResultRow({ term, query, showCategory = true }: Glossary
           to={`/glossary/${term.slug}`}
           className="inline-flex items-baseline gap-2 text-[15px] font-semibold leading-snug text-ink transition-colors hover:text-accent-strong"
         >
-          <span>
+          <span lang="en">
             <Highlight text={term.en} query={query} />
           </span>
           {term.abbreviation ? (
@@ -50,14 +52,16 @@ export function GlossaryResultRow({ term, query, showCategory = true }: Glossary
             aria-hidden="true"
           />
         </Link>
-        <p className="mt-0.5 text-[14px] text-accent-strong">
+        <p className="mt-0.5 text-[14px] text-accent-strong" lang="vi">
           <Highlight text={term.vi} query={query} />
         </p>
-        <p className="mt-1 line-clamp-2 max-w-[62ch] text-[13px] leading-relaxed text-ink-muted">
+        <p className="mt-1 line-clamp-2 max-w-[62ch] text-[13px] leading-relaxed text-ink-muted" lang="vi">
           {term.definitionVi}
         </p>
         {category && showCategory ? (
-          <p className="mt-1.5 text-[11px] uppercase tracking-[0.1em] text-ink-muted">{category.label.vi}</p>
+          <p className="mt-1.5 text-[11px] uppercase tracking-[0.1em] text-ink-muted" lang={uiLang}>
+            {category.label[uiLang]}
+          </p>
         ) : null}
       </div>
       <BookmarkButton kind="glossary" id={term.slug} size="sm" />
