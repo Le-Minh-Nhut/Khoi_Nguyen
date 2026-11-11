@@ -367,7 +367,7 @@ Coverage of behaviour that can regress:
 the largest page (practice) ~35 kB, with content tables shared across chunks.
 
 **Browser tests** — Playwright. Chromium at 320/390/768/1440/1920 and Firefox at 1280:
-**514 passed, 7 skipped, 0 failed** (the skips are viewport guards). `e2e/edulingo.spec.ts` covers the functional flows;
+**520 passed, 7 skipped, 0 failed** (the skips are viewport guards). `e2e/edulingo.spec.ts` covers the functional flows;
 `e2e/regression.spec.ts` holds one assertion group per audit finding, most of which fail on the
 pre-fix revision. `npm run e2e` builds first, so it works from a clean checkout.
 

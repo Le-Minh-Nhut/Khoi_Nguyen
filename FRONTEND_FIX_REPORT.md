@@ -31,7 +31,7 @@ Verification at the end of the pass:
 | `npm run lint` | clean |
 | `npm test` | 102 passed / 7 files |
 | `npm run build` | success (119 prerendered routes) |
-| `npm run e2e` | Chromium 320/390/768/1440/1920 + Firefox: **514 passed, 7 skipped, 0 failed** (see §5) |
+| `npm run e2e` | Chromium 320/390/768/1440/1920 + Firefox: **520 passed, 7 skipped, 0 failed** (see §5) |
 | `node scripts/contrast-audit.mjs` | 0 violations across 13 routes |
 | `node scripts/keyboard-audit.mjs` | 13/13 |
 | `node scripts/typography-check.mjs` | 0 Unicode problems, 0 clipped nodes, both fonts loaded |
@@ -132,7 +132,7 @@ node scripts/capture.mjs <url> after → artifacts/audit/*.png
 | Firefox 1572 | 1280 | 55 passed |
 | WebKit 2388 | 1280 | **could not launch** — host lacks `libavif16` |
 
-**514 passed, 7 skipped, 0 failed.** The 7 skips are viewport guards in the pre-existing
+**520 passed, 7 skipped, 0 failed.** The 7 skips are viewport guards in the pre-existing
 `edulingo.spec.ts` (desktop-only dropdown and hover checks) and the deliberate sub-640px guards in
 `regression.spec.ts`. They are conditions, not failures.
 `e2e/screenshots.spec.ts` writes files, so it is restricted to the desktop project rather than
